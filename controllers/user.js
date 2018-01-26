@@ -1,11 +1,11 @@
 var User         = require('../proxy').User;
-var Topic        = require('../proxy').Topic;
-var Reply        = require('../proxy').Reply;
-var TopicCollect = require('../proxy').TopicCollect;
+var Question        = require('../proxy').Question;
+var Answer        = require('../proxy').Answer;
+var QuestionCollect = require('../proxy').QuestionCollect;
 var utility      = require('utility');
 var util         = require('util');
-var TopicModel   = require('../models').Topic;
-var ReplyModel   = require('../models').Reply;
+var QuestionModel   = require('../models').Question;
+var AnswerModel   = require('../models').Answer;
 var tools        = require('../common/tools');
 var config       = require('../config');
 var EventProxy   = require('eventproxy');
@@ -23,7 +23,7 @@ exports.index = function (req, res, next) {
       return;
     }
 
-    var render = function (recent_topics, recent_replies) {
+    var render = function (recent_questions, recent_answers) {
       user.url = (function () {
         if (user.url && user.url.indexOf('http') !== 0) {
           return 'http://' + user.url;
@@ -37,36 +37,36 @@ exports.index = function (req, res, next) {
       }
       res.render('user/index', {
         user: user,
-        recent_topics: recent_topics,
-        recent_replies: recent_replies,
+        recent_questions: recent_questions,
+        recent_answers: recent_answers,
         token: token,
         pageTitle: util.format('@%s 的个人主页', user.loginname),
       });
     };
 
     var proxy = new EventProxy();
-    proxy.assign('recent_topics', 'recent_replies', render);
+    proxy.assign('recent_questions', 'recent_answers', render);
     proxy.fail(next);
 
     var query = {author_id: user._id};
     var opt = {limit: 5, sort: '-create_at'};
-    Topic.getTopicsByQuery(query, opt, proxy.done('recent_topics'));
+    Question.getQuestionsByQuery(query, opt, proxy.done('recent_questions'));
 
-    Reply.getRepliesByAuthorId(user._id, {limit: 20, sort: '-create_at'},
-      proxy.done(function (replies) {
+    Answer.getRepliesByAuthorId(user._id, {limit: 20, sort: '-create_at'},
+      proxy.done(function (answers) {
 
-        var topic_ids = replies.map(function (reply) {
-          return reply.topic_id.toString()
+        var question_ids = answers.map(function (answer) {
+          return answer.question_id.toString()
         })
-        topic_ids = _.uniq(topic_ids).slice(0, 5); //  只显示最近5条
+        question_ids = _.uniq(question_ids).slice(0, 5); //  只显示最近5条
 
-        var query = {_id: {'$in': topic_ids}};
+        var query = {_id: {'$in': question_ids}};
         var opt = {};
-        Topic.getTopicsByQuery(query, opt, proxy.done('recent_replies', function (recent_replies) {
-          recent_replies = _.sortBy(recent_replies, function (topic) {
-            return topic_ids.indexOf(topic._id.toString())
+        Question.getQuestionsByQuery(query, opt, proxy.done('recent_answers', function (recent_answers) {
+          recent_answers = _.sortBy(recent_answers, function (question) {
+            return question_ids.indexOf(question._id.toString())
           })
-          return recent_replies;
+          return recent_answers;
         }));
       }));
   });
@@ -187,26 +187,26 @@ exports.toggleStar = function (req, res, next) {
   });
 };
 
-exports.listCollectedTopics = function (req, res, next) {
+exports.listCollectedQuestions = function (req, res, next) {
   var name = req.params.name;
   var page = Number(req.query.page) || 1;
-  var limit = config.list_topic_count;
+  var limit = config.list_question_count;
 
   User.getUserByLoginName(name, function (err, user) {
     if (err || !user) {
       return next(err);
     }
-    var pages = Math.ceil(user.collect_topic_count/limit);
-    var render = function (topics) {
-      res.render('user/collect_topics', {
-        topics: topics,
+    var pages = Math.ceil(user.collect_question_count/limit);
+    var render = function (questions) {
+      res.render('user/collect_questions', {
+        questions: questions,
         current_page: page,
         pages: pages,
         user: user
       });
     };
 
-    var proxy = EventProxy.create('topics', render);
+    var proxy = EventProxy.create('questions', render);
     proxy.fail(next);
 
     var opt = {
@@ -214,17 +214,17 @@ exports.listCollectedTopics = function (req, res, next) {
       limit: limit,
     };
 
-    TopicCollect.getTopicCollectsByUserId(user._id, opt, proxy.done(function (docs) {
+    QuestionCollect.getQuestionCollectsByUserId(user._id, opt, proxy.done(function (docs) {
       var ids = docs.map(function (doc) {
-        return String(doc.topic_id)
+        return String(doc.question_id)
       })
       var query = { _id: { '$in': ids } };
 
-      Topic.getTopicsByQuery(query, {}, proxy.done('topics', function (topics) {
-        topics = _.sortBy(topics, function (topic) {
-          return ids.indexOf(String(topic._id))
+      Question.getQuestionsByQuery(query, {}, proxy.done('questions', function (questions) {
+        questions = _.sortBy(questions, function (question) {
+          return ids.indexOf(String(question._id))
         })
-        return topics
+        return questions
       }));
     }));
   });
@@ -243,10 +243,10 @@ exports.top100 = function (req, res, next) {
   });
 };
 
-exports.listTopics = function (req, res, next) {
+exports.listQuestions = function (req, res, next) {
   var user_name = req.params.name;
   var page = Number(req.query.page) || 1;
-  var limit = config.list_topic_count;
+  var limit = config.list_question_count;
 
   User.getUserByLoginName(user_name, function (err, user) {
     if (!user) {
@@ -254,25 +254,25 @@ exports.listTopics = function (req, res, next) {
       return;
     }
 
-    var render = function (topics, pages) {
-      res.render('user/topics', {
+    var render = function (questions, pages) {
+      res.render('user/questions', {
         user: user,
-        topics: topics,
+        questions: questions,
         current_page: page,
         pages: pages
       });
     };
 
     var proxy = new EventProxy();
-    proxy.assign('topics', 'pages', render);
+    proxy.assign('questions', 'pages', render);
     proxy.fail(next);
 
     var query = {'author_id': user._id};
     var opt = {skip: (page - 1) * limit, limit: limit, sort: '-create_at'};
-    Topic.getTopicsByQuery(query, opt, proxy.done('topics'));
+    Question.getQuestionsByQuery(query, opt, proxy.done('questions'));
 
-    Topic.getCountByQuery(query, proxy.done(function (all_topics_count) {
-      var pages = Math.ceil(all_topics_count / limit);
+    Question.getCountByQuery(query, proxy.done(function (all_questions_count) {
+      var pages = Math.ceil(all_questions_count / limit);
       proxy.emit('pages', pages);
     }));
   });
@@ -289,37 +289,37 @@ exports.listReplies = function (req, res, next) {
       return;
     }
 
-    var render = function (topics, pages) {
-      res.render('user/replies', {
+    var render = function (questions, pages) {
+      res.render('user/answers', {
         user: user,
-        topics: topics,
+        questions: questions,
         current_page: page,
         pages: pages
       });
     };
 
     var proxy = new EventProxy();
-    proxy.assign('topics', 'pages', render);
+    proxy.assign('questions', 'pages', render);
     proxy.fail(next);
 
     var opt = {skip: (page - 1) * limit, limit: limit, sort: '-create_at'};
-    Reply.getRepliesByAuthorId(user._id, opt, proxy.done(function (replies) {
+    Answer.getRepliesByAuthorId(user._id, opt, proxy.done(function (answers) {
       // 获取所有有评论的主题
-      var topic_ids = replies.map(function (reply) {
-        return reply.topic_id.toString();
+      var question_ids = answers.map(function (answer) {
+        return answer.question_id.toString();
       });
-      topic_ids = _.uniq(topic_ids);
+      question_ids = _.uniq(question_ids);
 
-      var query = {'_id': {'$in': topic_ids}};
-      Topic.getTopicsByQuery(query, {}, proxy.done('topics', function (topics) {
-        topics = _.sortBy(topics, function (topic) {
-          return topic_ids.indexOf(topic._id.toString())
+      var query = {'_id': {'$in': question_ids}};
+      Question.getQuestionsByQuery(query, {}, proxy.done('questions', function (questions) {
+        questions = _.sortBy(questions, function (question) {
+          return question_ids.indexOf(question._id.toString())
         })
-        return topics;
+        return questions;
       }));
     }));
 
-    Reply.getCountByAuthorId(user._id, proxy.done('pages', function (count) {
+    Answer.getCountByAuthorId(user._id, proxy.done('pages', function (count) {
       var pages = Math.ceil(count / limit);
       return pages;
     }));
@@ -365,15 +365,15 @@ exports.deleteAll = function (req, res, next) {
     if (!user) {
       return next(new Error('user is not exists'));
     }
-    ep.all('del_topics', 'del_replys', 'del_ups',
+    ep.all('del_questions', 'del_answers', 'del_ups',
       function () {
         res.json({status: 'success'});
       });
     // 删除主题
-    TopicModel.update({author_id: user._id}, {$set: {deleted: true}}, {multi: true}, ep.done('del_topics'));
+    QuestionModel.update({author_id: user._id}, {$set: {deleted: true}}, {multi: true}, ep.done('del_questions'));
     // 删除评论
-    ReplyModel.update({author_id: user._id}, {$set: {deleted: true}}, {multi: true}, ep.done('del_replys'));
+    AnswerModel.update({author_id: user._id}, {$set: {deleted: true}}, {multi: true}, ep.done('del_answers'));
     // 点赞数也全部干掉
-    ReplyModel.update({}, {$pull: {'ups': user._id}}, {multi: true}, ep.done('del_ups'));
+    AnswerModel.update({}, {$pull: {'ups': user._id}}, {multi: true}, ep.done('del_ups'));
   }));
 };

@@ -1,6 +1,6 @@
 var User = require('../../proxy/user');
-var Topic = require('../../proxy/topic');
-var Reply = require('../../proxy/reply');
+var Question = require('../../proxy/question');
+var Answer = require('../../proxy/answer');
 var ready = require('ready');
 var eventproxy = require('eventproxy');
 var utility = require('utility');
@@ -23,21 +23,21 @@ exports.createUserByNameAndPwd = function (loginname, pwd, callback) {
   });
 };
 
-var createTopic = exports.createTopic = function (authorId, callback) {
+var createQuestion = exports.createQuestion = function (authorId, callback) {
   var key = new Date().getTime() + '_' + randomInt();
-  Topic.newAndSave('topic title' + key, 'test topic content' + key, 'share', authorId, callback);
+  Question.newAndSave('question title' + key, 'test question content' + key, 'share', authorId, callback);
 };
 
-var createReply = exports.createReply = function (topicId, authorId, callback) {
-  Reply.newAndSave('I am content', topicId, authorId, callback);
+var createAnswer = exports.createAnswer = function (questionId, authorId, callback) {
+  Answer.newAndSave('I am content', questionId, authorId, callback);
 };
 
-var createSingleUp = exports.createSingleUp = function (replyId, userId, callback) {
-  Reply.getReply(replyId, function (err, reply) {
-    reply.ups = [];
-    reply.ups.push(userId);
-    reply.save(function (err, reply) {
-      callback(err, reply);
+var createSingleUp = exports.createSingleUp = function (answerId, userId, callback) {
+  Answer.getAnswer(answerId, function (err, answer) {
+    answer.ups = [];
+    answer.ups.push(userId);
+    answer.save(function (err, answer) {
+      callback(err, answer);
     });
   });
 };
@@ -65,19 +65,19 @@ ep.all('user', 'user2', 'admin', function (user, user2, admin) {
   exports.adminUser = admin;
   exports.adminUserCookie = mockUser(adminObj);
 
-  createTopic(user._id, ep.done('topic'));
+  createQuestion(user._id, ep.done('question'));
 });
 createUser(ep.done('user'));
 createUser(ep.done('user2'));
 createUser(ep.done('admin'));
 
-ep.all('topic', function (topic) {
-  exports.testTopic = topic;
-  createReply(topic._id, exports.normalUser._id, ep.done('reply'));
+ep.all('question', function (question) {
+  exports.testQuestion = question;
+  createAnswer(question._id, exports.normalUser._id, ep.done('answer'));
 });
 
-ep.all('reply', function (reply) {
-  exports.testReply = reply;
+ep.all('answer', function (answer) {
+  exports.testAnswer = answer;
   exports.ready(true);
 });
 

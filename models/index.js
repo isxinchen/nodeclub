@@ -13,13 +13,13 @@ mongoose.connect(config.db, {
 
 // models
 require('./user');
-require('./topic');
-require('./reply');
-require('./topic_collect');
+require('./question');
+require('./answer');
+require('./question_collect');
 require('./message');
 
 exports.User         = mongoose.model('User');
-exports.Topic        = mongoose.model('Topic');
-exports.Reply        = mongoose.model('Reply');
-exports.TopicCollect = mongoose.model('TopicCollect');
+exports.Question        = mongoose.model('Question');
+exports.Answer        = mongoose.model('Answer');
+exports.QuestionCollect = mongoose.model('QuestionCollect');
 exports.Message      = mongoose.model('Message');

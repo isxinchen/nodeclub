@@ -52,8 +52,8 @@
   .done(assets, config.site_static_host, config.mini_assets)
   %>
 
-  <% if (typeof(topic) !== 'undefined') { %>
-  <title><%= topic.title %> - <%= config.name %></title>
+  <% if (typeof(question) !== 'undefined') { %>
+  <title><%= question.title %> - <%= config.name %></title>
   <% } else if (typeof(pageTitle) !== 'undefined') { %>
   <title><%= pageTitle %> - <%= config.name %></title>
   <% } else { %>

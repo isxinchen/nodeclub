@@ -83,7 +83,7 @@
       display: none;
   }
 
-  #content .topic_title {
+  #content .question_title {
       font-size: 1em;
       width: 100%;
   }
@@ -99,7 +99,7 @@
       display: none;
   }
 
-  #content .reply_count {
+  #content .answer_count {
       position: absolute;
       bottom: 0;
       left: 85px;
@@ -108,12 +108,12 @@
       font-size: 10px;
   }
 
-  .topic_title_wrapper {
+  .question_title_wrapper {
       padding-left: 40px;
   }
 
-  #main .topic_content p a.content_img,
-  #main .reply_content p a.content_img {
+  #main .question_content p a.content_img,
+  #main .answer_content p a.content_img {
       width: 100%;
   }
 
@@ -151,7 +151,7 @@
       padding-left: 10px;
   }
 
-  #content .reply_content {
+  #content .answer_content {
       clear: both;
       padding-left: 0;
       padding-top: 5px;

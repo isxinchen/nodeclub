@@ -1,7 +1,7 @@
 var models       = require('../../models');
-var TopicModel   = models.Topic;
-var TopicProxy   = require('../../proxy').Topic;
-var TopicCollect = require('../../proxy').TopicCollect;
+var QuestionModel   = models.Question;
+var QuestionProxy   = require('../../proxy').Question;
+var QuestionCollect = require('../../proxy').QuestionCollect;
 var UserProxy    = require('../../proxy').User;
 var UserModel    = models.User;
 var config       = require('../../config');
@@ -15,7 +15,7 @@ var index = function (req, res, next) {
   var page     = parseInt(req.query.page, 10) || 1;
   page         = page > 0 ? page : 1;
   var tab      = req.query.tab || 'all';
-  var limit    = Number(req.query.limit) || config.list_topic_count;
+  var limit    = Number(req.query.limit) || config.list_question_count;
   var mdrender = req.query.mdrender === 'false' ? false : true;
 
   var query = {};
@@ -29,31 +29,31 @@ var index = function (req, res, next) {
     }
   }
   query.deleted = false;
-  var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -last_reply_at'};
+  var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -last_answer_at'};
 
   var ep = new eventproxy();
   ep.fail(next);
 
-  TopicModel.find(query, '', options, ep.done('topics'));
+  QuestionModel.find(query, '', options, ep.done('questions'));
 
-  ep.all('topics', function (topics) {
-    topics.forEach(function (topic) {
-      UserModel.findById(topic.author_id, ep.done(function (author) {
+  ep.all('questions', function (questions) {
+    questions.forEach(function (question) {
+      UserModel.findById(question.author_id, ep.done(function (author) {
         if (mdrender) {
-          topic.content = renderHelper.markdown(at.linkUsers(topic.content));
+          question.content = renderHelper.markdown(at.linkUsers(question.content));
         }
-        topic.author = _.pick(author, ['loginname', 'avatar_url']);
+        question.author = _.pick(author, ['loginname', 'avatar_url']);
         ep.emit('author');
       }));
     });
 
-    ep.after('author', topics.length, function () {
-      topics = topics.map(function (topic) {
-        return _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-          'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author']);
+    ep.after('author', questions.length, function () {
+      questions = questions.map(function (question) {
+        return _.pick(question, ['id', 'author_id', 'tab', 'content', 'title', 'last_answer_at',
+          'good', 'top', 'answer_count', 'visit_count', 'create_at', 'author']);
       });
 
-      res.send({success: true, data: topics});
+      res.send({success: true, data: questions});
     });
   });
 };
@@ -61,62 +61,62 @@ var index = function (req, res, next) {
 exports.index = index;
 
 var show = function (req, res, next) {
-  var topicId  = String(req.params.id);
+  var questionId  = String(req.params.id);
 
   var mdrender = req.query.mdrender === 'false' ? false : true;
   var ep       = new eventproxy();
 
-  if (!validator.isMongoId(topicId)) {
+  if (!validator.isMongoId(questionId)) {
     res.status(400);
     return res.send({success: false, error_msg: '不是有效的话题id'});
   }
 
   ep.fail(next);
 
-  TopicProxy.getFullTopic(topicId, ep.done(function (msg, topic, author, replies) {
-    if (!topic) {
+  QuestionProxy.getFullQuestion(questionId, ep.done(function (msg, question, author, answers) {
+    if (!question) {
       res.status(404);
       return res.send({success: false, error_msg: '话题不存在'});
     }
-    topic = _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-      'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author']);
+    question = _.pick(question, ['id', 'author_id', 'tab', 'content', 'title', 'last_answer_at',
+      'good', 'top', 'answer_count', 'visit_count', 'create_at', 'author']);
 
     if (mdrender) {
-      topic.content = renderHelper.markdown(at.linkUsers(topic.content));
+      question.content = renderHelper.markdown(at.linkUsers(question.content));
     }
-    topic.author = _.pick(author, ['loginname', 'avatar_url']);
+    question.author = _.pick(author, ['loginname', 'avatar_url']);
 
-    topic.replies = replies.map(function (reply) {
+    question.answers = answers.map(function (answer) {
       if (mdrender) {
-        reply.content = renderHelper.markdown(at.linkUsers(reply.content));
+        answer.content = renderHelper.markdown(at.linkUsers(answer.content));
       }
-      reply.author = _.pick(reply.author, ['loginname', 'avatar_url']);
-      reply =  _.pick(reply, ['id', 'author', 'content', 'ups', 'create_at', 'reply_id']);
-      reply.reply_id = reply.reply_id || null;
+      answer.author = _.pick(answer.author, ['loginname', 'avatar_url']);
+      answer =  _.pick(answer, ['id', 'author', 'content', 'ups', 'create_at', 'answer_id']);
+      answer.answer_id = answer.answer_id || null;
 
-      if (reply.ups && req.user && reply.ups.indexOf(req.user._id) != -1) {
-        reply.is_uped = true;
+      if (answer.ups && req.user && answer.ups.indexOf(req.user._id) != -1) {
+        answer.is_uped = true;
       } else {
-        reply.is_uped = false;
+        answer.is_uped = false;
       }
 
-      return reply;
+      return answer;
     });
 
-    ep.emit('full_topic', topic)
+    ep.emit('full_question', question)
   }));
 
 
   if (!req.user) {
     ep.emitLater('is_collect', null)
   } else {
-    TopicCollect.getTopicCollect(req.user._id, topicId, ep.done('is_collect'))
+    QuestionCollect.getQuestionCollect(req.user._id, questionId, ep.done('is_collect'))
   }
 
-  ep.all('full_topic', 'is_collect', function (full_topic, is_collect) {
-    full_topic.is_collect = !!is_collect;
+  ep.all('full_question', 'is_collect', function (full_question, is_collect) {
+    full_question.is_collect = !!is_collect;
 
-    res.send({success: true, data: full_topic});
+    res.send({success: true, data: full_question});
   })
 
 };
@@ -151,7 +151,7 @@ var create = function (req, res, next) {
     return res.send({success: false, error_msg: editError});
   }
 
-  TopicProxy.newAndSave(title, content, tab, req.user.id, function (err, topic) {
+  QuestionProxy.newAndSave(title, content, tab, req.user.id, function (err, question) {
     if (err) {
       return next(err);
     }
@@ -162,26 +162,26 @@ var create = function (req, res, next) {
     proxy.all('score_saved', function () {
       res.send({
         success: true,
-        topic_id: topic.id
+        question_id: question.id
       });
     });
     UserProxy.getUserById(req.user.id, proxy.done(function (user) {
       user.score += 5;
-      user.topic_count += 1;
+      user.question_count += 1;
       user.save();
       req.user = user;
       proxy.emit('score_saved');
     }));
 
     //发送at消息
-    at.sendMessageToMentionUsers(content, topic.id, req.user.id);
+    at.sendMessageToMentionUsers(content, question.id, req.user.id);
   });
 };
 
 exports.create = create;
 
 exports.update = function (req, res, next) {
-  var topic_id = _.trim(req.body.topic_id);
+  var question_id = _.trim(req.body.question_id);
   var title    = _.trim(req.body.title);
   var tab      = _.trim(req.body.tab);
   var content  = _.trim(req.body.content);
@@ -191,13 +191,13 @@ exports.update = function (req, res, next) {
     return tPair[0];
   });
 
-  TopicProxy.getTopicById(topic_id, function (err, topic, tags) {
-    if (!topic) {
+  QuestionProxy.getQuestionById(question_id, function (err, question, tags) {
+    if (!question) {
       res.status(400);
       return res.send({success: false, error_msg: '此话题不存在或已被删除。'});
     }
 
-    if (topic.author_id.equals(req.user._id) || req.user.is_admin) {
+    if (question.author_id.equals(req.user._id) || req.user.is_admin) {
       // 验证
       var editError;
       if (title === '') {
@@ -214,21 +214,21 @@ exports.update = function (req, res, next) {
       }
 
       //保存话题
-      topic.title     = title;
-      topic.content   = content;
-      topic.tab       = tab;
-      topic.update_at = new Date();
+      question.title     = title;
+      question.content   = content;
+      question.tab       = tab;
+      question.update_at = new Date();
 
-      topic.save(function (err) {
+      question.save(function (err) {
         if (err) {
           return next(err);
         }
         //发送at消息
-        at.sendMessageToMentionUsers(content, topic._id, req.user._id);
+        at.sendMessageToMentionUsers(content, question._id, req.user._id);
 
         res.send({
           success: true,
-          topic_id: topic.id
+          question_id: question.id
         });
       });
     } else {

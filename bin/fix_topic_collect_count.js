@@ -1,9 +1,9 @@
-var TopicCollect = require('../models').TopicCollect;
+var QuestionCollect = require('../models').QuestionCollect;
 var UserModel = require('../models').User;
-var TopicModel = require('../models').Topic
+var QuestionModel = require('../models').Question
 
-// 修复用户的topic_collect计数
-TopicCollect.aggregate(
+// 修复用户的question_collect计数
+QuestionCollect.aggregate(
   [{
     "$group" :
       {
@@ -23,7 +23,7 @@ TopicCollect.aggregate(
           return;
         }
 
-        user.collect_topic_count = count;
+        user.collect_question_count = count;
         user.save(function () {
           console.log(user.loginname, count)
         });
@@ -31,30 +31,30 @@ TopicCollect.aggregate(
     })
   })
 
-  // 修复帖子的topic_collect计数
-  TopicCollect.aggregate(
+  // 修复帖子的question_collect计数
+  QuestionCollect.aggregate(
     [{
       "$group" :
         {
-          _id : {topic_id: "$topic_id"},
+          _id : {question_id: "$question_id"},
           count : { $sum : 1}
         }
     }], function (err, result) {
       result.forEach(function (row) {
-        var topic_id = row._id.topic_id;
+        var question_id = row._id.question_id;
         var count = row.count;
 
-        TopicModel.findOne({
-          _id: topic_id
-        }, function (err, topic) {
+        QuestionModel.findOne({
+          _id: question_id
+        }, function (err, question) {
 
-          if (!topic) {
+          if (!question) {
             return;
           }
 
-          topic.collect_topic_count = count;
-          topic.save(function () {
-            console.log(topic.id, count)
+          question.collect_question_count = count;
+          question.save(function () {
+            console.log(question.id, count)
           });
         })
       })

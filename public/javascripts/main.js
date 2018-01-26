@@ -34,7 +34,7 @@ $(document).ready(function () {
   $(window).resize(moveBacktotop);
   $(window).resize(footerFixBottom);
 
-  $('.topic_content a,.reply_content a').attr('target', '_blank');
+  $('.question_content a,.answer_content a').attr('target', '_blank');
 
   // pretty code
   prettyPrint();

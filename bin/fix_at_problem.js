@@ -1,12 +1,12 @@
 // 一次性脚本
 // 修复之前重复编辑帖子会导致重复 @someone 的渲染问题
-var TopicModel = require('../models').Topic;
+var QuestionModel = require('../models').Question;
 
-TopicModel.find({content: /\[{2,}@/}).exec(function (err, topics) {
-  topics.forEach(function (topic) {
-    topic.content = fix(topic.content);
-    console.log(topic.id);
-    topic.save();
+QuestionModel.find({content: /\[{2,}@/}).exec(function (err, questions) {
+  questions.forEach(function (question) {
+    question.content = fix(question.content);
+    console.log(question.id);
+    question.save();
   });
 });
 

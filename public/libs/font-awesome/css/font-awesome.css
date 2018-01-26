@@ -926,8 +926,8 @@
 .fa-circle:before {
   content: "\f111";
 }
-.fa-mail-reply:before,
-.fa-reply:before {
+.fa-mail-answer:before,
+.fa-answer:before {
   content: "\f112";
 }
 .fa-github-alt:before {
@@ -966,8 +966,8 @@
 .fa-code:before {
   content: "\f121";
 }
-.fa-mail-reply-all:before,
-.fa-reply-all:before {
+.fa-mail-answer-all:before,
+.fa-answer-all:before {
   content: "\f122";
 }
 .fa-star-half-empty:before,

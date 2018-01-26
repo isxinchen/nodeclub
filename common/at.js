@@ -1,5 +1,5 @@
 /*!
- * nodeclub - topic mention user controller.
+ * nodeclub - question mention user controller.
  * Copyright(c) 2012 fengmk2 <fengmk2@gmail.com>
  * Copyright(c) 2012 muyuan
  * MIT Licensed
@@ -57,15 +57,15 @@ exports.fetchUsers = fetchUsers;
  * Callback:
  * - err, 数据库异常
  * @param {String} text 文本内容
- * @param {String} topicId 主题ID
+ * @param {String} questionId 主题ID
  * @param {String} authorId 作者ID
- * @param {String} reply_id 回复ID
+ * @param {String} answer_id 回复ID
  * @param {Function} callback 回调函数
  */
-exports.sendMessageToMentionUsers = function (text, topicId, authorId, reply_id, callback) {
-  if (typeof reply_id === 'function') {
-    callback = reply_id;
-    reply_id = null;
+exports.sendMessageToMentionUsers = function (text, questionId, authorId, answer_id, callback) {
+  if (typeof answer_id === 'function') {
+    callback = answer_id;
+    answer_id = null;
   }
   callback = callback || _.noop;
 
@@ -85,7 +85,7 @@ exports.sendMessageToMentionUsers = function (text, topicId, authorId, reply_id,
     });
 
     users.forEach(function (user) {
-      Message.sendAtMessage(user._id, authorId, topicId, reply_id, ep.done('sent'));
+      Message.sendAtMessage(user._id, authorId, questionId, answer_id, ep.done('sent'));
     });
   });
 };

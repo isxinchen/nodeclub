@@ -3,19 +3,19 @@ var request = require('supertest')(app);
 var should = require('should');
 var support = require('../../support/support');
 
-describe('test/api/v1/topic.test.js', function () {
+describe('test/api/v1/question.test.js', function () {
   
-  var mockUser, mockTopic;
+  var mockUser, mockQuestion;
 
-  var createdTopicId = null;
+  var createdQuestionId = null;
 
   before(function (done) {
     support.createUser(function (err, user) {
       mockUser = user;
-      support.createTopic(user.id, function (err, topic) {
-        mockTopic = topic;
-        support.createReply(topic.id, user.id, function (err, reply) {
-          support.createSingleUp(reply.id, user.id, function (err, reply) {
+      support.createQuestion(user.id, function (err, question) {
+        mockQuestion = question;
+        support.createAnswer(question.id, user.id, function (err, answer) {
+          support.createSingleUp(answer.id, user.id, function (err, answer) {
             done();
           });
         });
@@ -23,10 +23,10 @@ describe('test/api/v1/topic.test.js', function () {
     });
   });
 
-  describe('get /api/v1/topics', function () {
+  describe('get /api/v1/questions', function () {
 
-    it('should return topics', function (done) {
-      request.get('/api/v1/topics')
+    it('should return questions', function (done) {
+      request.get('/api/v1/questions')
         .end(function (err, res) {
           should.not.exists(err);
           res.body.success.should.true();
@@ -35,8 +35,8 @@ describe('test/api/v1/topic.test.js', function () {
         });
     });
 
-    it('should return topics with limit 2', function (done) {
-      request.get('/api/v1/topics')
+    it('should return questions with limit 2', function (done) {
+      request.get('/api/v1/questions')
         .query({
           limit: 2
         })
@@ -50,20 +50,20 @@ describe('test/api/v1/topic.test.js', function () {
 
   });
 
-  describe('get /api/v1/topic/:topicid', function () {
+  describe('get /api/v1/question/:questionid', function () {
 
-    it('should return topic info', function (done) {
-      request.get('/api/v1/topic/' + mockTopic.id)
+    it('should return question info', function (done) {
+      request.get('/api/v1/question/' + mockQuestion.id)
         .end(function (err, res) {
           should.not.exists(err);
           res.body.success.should.true();
-          res.body.data.id.should.equal(mockTopic.id);
+          res.body.data.id.should.equal(mockQuestion.id);
           done();
         });
     });
 
-    it('should fail when topic_id is not valid', function (done) {
-      request.get('/api/v1/topic/' + mockTopic.id + 'not_valid')
+    it('should fail when question_id is not valid', function (done) {
+      request.get('/api/v1/question/' + mockQuestion.id + 'not_valid')
         .end(function (err, res) {
           should.not.exists(err);
           res.status.should.equal(400);
@@ -72,14 +72,14 @@ describe('test/api/v1/topic.test.js', function () {
         });
     });
 
-    it('should fail when topic not found', function (done) {
-      var notFoundTopicId = mockTopic.id.split("").reverse().join("");
-      request.get('/api/v1/topic/' + notFoundTopicId)
+    it('should fail when question not found', function (done) {
+      var notFoundQuestionId = mockQuestion.id.split("").reverse().join("");
+      request.get('/api/v1/question/' + notFoundQuestionId)
         .end(function (err, res) {
           should.not.exists(err);
-          if (mockTopic.id === notFoundTopicId) { // 小概率事件id反转之后还不变
+          if (mockQuestion.id === notFoundQuestionId) { // 小概率事件id反转之后还不变
             res.body.success.should.true();
-            res.body.data.id.should.equal(mockTopic.id);
+            res.body.data.id.should.equal(mockQuestion.id);
           } else {
             res.status.should.equal(404);
             res.body.success.should.false();
@@ -89,44 +89,44 @@ describe('test/api/v1/topic.test.js', function () {
     });
 
     it('should is_uped to be false without accesstoken', function (done) {
-      request.get('/api/v1/topic/' + mockTopic.id)
+      request.get('/api/v1/question/' + mockQuestion.id)
         .end(function (err, res) {
           should.not.exists(err);
-          res.body.data.replies[0].is_uped.should.false();
+          res.body.data.answers[0].is_uped.should.false();
           done();
         });
     });
 
     it('should is_uped to be false with wrong accesstoken', function (done) {
-      request.get('/api/v1/topic/' + mockTopic.id)
+      request.get('/api/v1/question/' + mockQuestion.id)
         .query({
           accesstoken: support.normalUser2.accesstoken
         })
         .end(function (err, res) {
           should.not.exists(err);
-          res.body.data.replies[0].is_uped.should.false();
+          res.body.data.answers[0].is_uped.should.false();
           done();
         });
     });
 
     it('should is_uped to be true with right accesstoken', function (done) {
-      request.get('/api/v1/topic/' + mockTopic.id)
+      request.get('/api/v1/question/' + mockQuestion.id)
         .query({
           accesstoken: mockUser.accessToken
         })
         .end(function (err, res) {
           should.not.exists(err);
-          res.body.data.replies[0].is_uped.should.true();
+          res.body.data.answers[0].is_uped.should.true();
           done();
         });
     });
 
   });
 
-  describe('post /api/v1/topics', function () {
+  describe('post /api/v1/questions', function () {
 
-    it('should create a topic', function (done) {
-      request.post('/api/v1/topics')
+    it('should create a question', function (done) {
+      request.post('/api/v1/questions')
         .send({
           accesstoken: mockUser.accessToken,
           title: '我是API测试标题',
@@ -136,14 +136,14 @@ describe('test/api/v1/topic.test.js', function () {
         .end(function (err, res) {
           should.not.exists(err);
           res.body.success.should.true();
-          res.body.topic_id.should.be.String();
-          createdTopicId = res.body.topic_id
+          res.body.question_id.should.be.String();
+          createdQuestionId = res.body.question_id
           done();
         });
     });
 
     it('should 401 with no accessToken', function (done) {
-      request.post('/api/v1/topics')
+      request.post('/api/v1/questions')
         .send({
           title: '我是API测试标题',
           tab: 'share',
@@ -158,7 +158,7 @@ describe('test/api/v1/topic.test.js', function () {
     });
 
     it('should fail with no title', function (done) {
-      request.post('/api/v1/topics')
+      request.post('/api/v1/questions')
         .send({
           accesstoken: mockUser.accessToken,
           title: '',
@@ -174,7 +174,7 @@ describe('test/api/v1/topic.test.js', function () {
     });
 
     it('should fail with error tab', function (done) {
-      request.post('/api/v1/topics')
+      request.post('/api/v1/questions')
         .send({
           accesstoken: mockUser.accessToken,
           title: '我是API测试标题',
@@ -190,7 +190,7 @@ describe('test/api/v1/topic.test.js', function () {
     });
 
     it('should fail with no content', function (done) {
-      request.post('/api/v1/topics')
+      request.post('/api/v1/questions')
         .send({
           accesstoken: mockUser.accessToken,
           title: '我是API测试标题',
@@ -207,20 +207,20 @@ describe('test/api/v1/topic.test.js', function () {
 
   });
 
-  describe('post /api/v1/topics/update', function () {
-    it('should update a topic', function (done) {
-      request.post('/api/v1/topics/update')
+  describe('post /api/v1/questions/update', function () {
+    it('should update a question', function (done) {
+      request.post('/api/v1/questions/update')
         .send({
           accesstoken: mockUser.accessToken,
-          topic_id: createdTopicId,
+          question_id: createdQuestionId,
           title: '我是API测试标题',
           tab: 'share',
-          content: '我是API测试内容 /api/v1/topics/update'
+          content: '我是API测试内容 /api/v1/questions/update'
         })
         .end(function (err, res) {
           should.not.exists(err);
           res.body.success.should.true();
-          res.body.topic_id.should.eql(createdTopicId);
+          res.body.question_id.should.eql(createdQuestionId);
           done();
         });
     })

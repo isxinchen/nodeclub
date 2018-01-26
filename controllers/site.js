@@ -10,7 +10,7 @@
  */
 
 var User         = require('../proxy').User;
-var Topic        = require('../proxy').Topic;
+var Question        = require('../proxy').Question;
 var config       = require('../config');
 var eventproxy   = require('eventproxy');
 var cache        = require('../common/cache');
@@ -42,11 +42,11 @@ exports.index = function (req, res, next) {
     query.create_at = {$gte: moment().subtract(1, 'years').toDate()}
   }
 
-  var limit = config.list_topic_count;
-  var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -last_reply_at'};
+  var limit = config.list_question_count;
+  var options = { skip: (page - 1) * limit, limit: limit, sort: '-top -last_answer_at'};
 
-  Topic.getTopicsByQuery(query, options, proxy.done('topics', function (topics) {
-    return topics;
+  Question.getQuestionsByQuery(query, options, proxy.done('questions', function (questions) {
+    return questions;
   }));
 
   // 取排行榜上的用户
@@ -67,16 +67,16 @@ exports.index = function (req, res, next) {
   // END 取排行榜上的用户
 
   // 取0回复的主题
-  cache.get('no_reply_topics', proxy.done(function (no_reply_topics) {
-    if (no_reply_topics) {
-      proxy.emit('no_reply_topics', no_reply_topics);
+  cache.get('no_answer_questions', proxy.done(function (no_answer_questions) {
+    if (no_answer_questions) {
+      proxy.emit('no_answer_questions', no_answer_questions);
     } else {
-      Topic.getTopicsByQuery(
-        { reply_count: 0, tab: {$nin: ['job', 'dev']}},
+      Question.getQuestionsByQuery(
+        { answer_count: 0, tab: {$nin: ['job', 'dev']}},
         { limit: 5, sort: '-create_at'},
-        proxy.done('no_reply_topics', function (no_reply_topics) {
-          cache.set('no_reply_topics', no_reply_topics, 60 * 1);
-          return no_reply_topics;
+        proxy.done('no_answer_questions', function (no_answer_questions) {
+          cache.set('no_answer_questions', no_answer_questions, 60 * 1);
+          return no_answer_questions;
         }));
     }
   }));
@@ -88,8 +88,8 @@ exports.index = function (req, res, next) {
     if (pages) {
       proxy.emit('pages', pages);
     } else {
-      Topic.getCountByQuery(query, proxy.done(function (all_topics_count) {
-        var pages = Math.ceil(all_topics_count / limit);
+      Question.getCountByQuery(query, proxy.done(function (all_questions_count) {
+        var pages = Math.ceil(all_questions_count / limit);
         cache.set(pagesCacheKey, pages, 60 * 1);
         proxy.emit('pages', pages);
       }));
@@ -98,14 +98,14 @@ exports.index = function (req, res, next) {
   // END 取分页数据
 
   var tabName = renderHelper.tabName(tab);
-  proxy.all('topics', 'tops', 'no_reply_topics', 'pages',
-    function (topics, tops, no_reply_topics, pages) {
+  proxy.all('questions', 'tops', 'no_answer_questions', 'pages',
+    function (questions, tops, no_answer_questions, pages) {
       res.render('index', {
-        topics: topics,
+        questions: questions,
         current_page: page,
-        list_topic_count: limit,
+        list_question_count: limit,
         tops: tops,
-        no_reply_topics: no_reply_topics,
+        no_answer_questions: no_answer_questions,
         pages: pages,
         tabs: config.tabs,
         tab: tab,
@@ -131,12 +131,12 @@ exports.sitemap = function (req, res, next) {
     if (sitemapData) {
       ep.emit('sitemap', sitemapData);
     } else {
-      Topic.getLimit5w(function (err, topics) {
+      Question.getLimit5w(function (err, questions) {
         if (err) {
           return next(err);
         }
-        topics.forEach(function (topic) {
-          urlset.ele('url').ele('loc', 'http://cnodejs.org/topic/' + topic._id);
+        questions.forEach(function (question) {
+          urlset.ele('url').ele('loc', 'http://cnodejs.org/question/' + question._id);
         });
 
         var sitemapData = urlset.end();

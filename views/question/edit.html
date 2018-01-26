@@ -25,9 +25,9 @@
       </div>
       <% }else{ %>
       <% if (typeof(action) !== 'undefined' && action === 'edit') { %>
-      <form id='create_topic_form' action='/topic/<%= topic_id %>/edit' method='post'>
+      <form id='create_question_form' action='/question/<%= question_id %>/edit' method='post'>
         <% } else { %>
-        <form id='create_topic_form' action='/topic/create' method='post'>
+        <form id='create_question_form' action='/question/create' method='post'>
           <% } %>
           <fieldset>
             <span class="tab-selector">选择版块：</span>
@@ -46,7 +46,7 @@
 
               <%});%>
             </select>
-            <span id="topic_create_warn"></span>
+            <span id="question_create_warn"></span>
             <textarea autofocus class='span9' id='title' name='title' rows='1'
                       placeholder="标题字数 10 字以上"
                     ><%= typeof(title) !== 'undefined' && title || '' %></textarea>
@@ -65,7 +65,7 @@
 
             </div>
 
-            <input type='hidden' id='topic_tags' name='topic_tags' value=''>
+            <input type='hidden' id='question_tags' name='question_tags' value=''>
             <input type='hidden' name='_csrf' value='<%= csrf %>'>
           </fieldset>
         </form>
@@ -82,7 +82,7 @@
     editor.render($('.editor')[0]);
 
     // 版块选择的检查，必须选择
-    $('#create_topic_form').on('submit', function (e) {
+    $('#create_question_form').on('submit', function (e) {
       var tabValue = $('#tab-value').val();
       if (!tabValue) {
         alert('必须选择一个版块！');
@@ -99,11 +99,11 @@
       var value = $this.val();
       var warnMsg = '';
       if (value === 'job') {
-        warnMsg = '<strong>为避免被管理员删帖，发帖时请好好阅读<a href="http://cnodejs.org/topic/541ed2d05e28155f24676a12" target="_blank">《招聘帖规范》</a></strong>';
+        warnMsg = '<strong>为避免被管理员删帖，发帖时请好好阅读<a href="http://cnodejs.org/question/541ed2d05e28155f24676a12" target="_blank">《招聘帖规范》</a></strong>';
       } else if (value === 'ask') {
         warnMsg = '<strong>提问时，请遵循 <a href="https://gist.github.com/alsotang/f654af8b1fff220e63fcb44846423e6d" target="_blank">《提问的智慧》</a>中提及的要点，以便您更接收到高质量回复。</strong>'
       }
-      $('#topic_create_warn').html(warnMsg);
+      $('#question_create_warn').html(warnMsg);
     });
     // END 选择招聘版块时，给出提示
   })();

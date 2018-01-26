@@ -6,8 +6,8 @@
         <li class='active'>API</li>
       </ul>
     </div>
-    <div class='inner topic'>
-      <div class="topic_content">
+    <div class='inner question'>
+      <div class="question_content">
         <%- markdown(multiline(function () {
 /*
 
@@ -15,7 +15,7 @@
 
 ### 主题
 
-#### get /topics 主题首页
+#### get /questions 主题首页
 
 接收 get 参数
 
@@ -24,18 +24,18 @@
 * limit `Number` 每一页的主题数量
 * mdrender `String` 当为 `false` 时，不渲染。默认为 `true`，渲染出现的所有 markdown 格式文本。
 
-示例：[/api/v1/topics](/api/v1/topics)
+示例：[/api/v1/questions](/api/v1/questions)
 
-#### get /topic/:id 主题详情
+#### get /question/:id 主题详情
 
 接收 get 参数
 
 * mdrender `String` 当为 `false` 时，不渲染。默认为 `true`，渲染出现的所有 markdown 格式文本。
-* accesstoken `String` 当需要知道一个主题是否被特定用户收藏以及对应评论是否被特定用户点赞时，才需要带此参数。会影响返回值中的 `is_collect` 以及 `replies` 列表中的 `is_uped` 值。
+* accesstoken `String` 当需要知道一个主题是否被特定用户收藏以及对应评论是否被特定用户点赞时，才需要带此参数。会影响返回值中的 `is_collect` 以及 `answers` 列表中的 `is_uped` 值。
 
-示例：[/api/v1/topic/5433d5e4e737cbe96dcef312](/api/v1/topic/5433d5e4e737cbe96dcef312)
+示例：[/api/v1/question/5433d5e4e737cbe96dcef312](/api/v1/question/5433d5e4e737cbe96dcef312)
 
-#### post /topics 新建主题
+#### post /questions 新建主题
 
 接收 post 参数
 
@@ -47,15 +47,15 @@
 返回值示例
 
 ```js
-{success: true, topic_id: '5433d5e4e737cbe96dcef312'}
+{success: true, question_id: '5433d5e4e737cbe96dcef312'}
 ```
 
-#### post /topics/update 编辑主题
+#### post /questions/update 编辑主题
 
 接收 post 参数
 
 * accesstoken `String` 用户的 accessToken
-* topic_id `String` 主题id
+* question_id `String` 主题id
 * title `String` 标题
 * tab `String` 目前有 `ask` `share` `job`
 * content `String` 主体内容
@@ -63,18 +63,18 @@
 返回值示例
 
 ```js
-{success: true, topic_id: '5433d5e4e737cbe96dcef312'}
+{success: true, question_id: '5433d5e4e737cbe96dcef312'}
 ```
 
 
 ### 主题收藏
 
-#### post /topic_collect/collect 收藏主题
+#### post /question_collect/collect 收藏主题
 
 接收 post 参数
 
 * accesstoken `String` 用户的 accessToken
-* topic_id `String` 主题的id
+* question_id `String` 主题的id
 
 返回值示例
 
@@ -82,40 +82,40 @@
 {"success": true}
 ```
 
-#### post /topic_collect/de_collect 取消主题
+#### post /question_collect/de_collect 取消主题
 
 接收 post 参数
 
 * accesstoken `String` 用户的 accessToken
-* topic_id `String` 主题的id
+* question_id `String` 主题的id
 
 返回值示例
 
 ```js
 {success: true}
 ```
-#### get /topic_collect/:loginname 用户所收藏的主题
+#### get /question_collect/:loginname 用户所收藏的主题
 
-示例：[/api/v1/topic_collect/alsotang](/api/v1/topic_collect/alsotang)
+示例：[/api/v1/question_collect/alsotang](/api/v1/question_collect/alsotang)
 
 
 ### 评论
 
-#### post /topic/:topic_id/replies 新建评论
+#### post /question/:question_id/answers 新建评论
 
 接收 post 参数
 
 * accesstoken `String` 用户的 accessToken
 * content `String` 评论的主体
-* reply_id `String` 如果这个评论是对另一个评论的回复，请务必带上此字段。这样前端就可以构建出评论线索图。
+* answer_id `String` 如果这个评论是对另一个评论的回复，请务必带上此字段。这样前端就可以构建出评论线索图。
 
 返回值示例
 
 ```js
-{success: true, reply_id: '5433d5e4e737cbe96dcef312'}
+{success: true, answer_id: '5433d5e4e737cbe96dcef312'}
 ```
 
-#### post /reply/:reply_id/ups 为评论点赞
+#### post /answer/:answer_id/ups 为评论点赞
 
 接受 post 参数
 
@@ -186,12 +186,12 @@
           loginname: "alsotang",
           avatar_url: "https://avatars.githubusercontent.com/u/1147375?v=2"
         },
-        topic: {
+        question: {
           id: "542d6ecb9ecb3db94b2b3d0f",
           title: "adfadfadfasdf",
-          last_reply_at: "2014-10-18T07:47:22.563Z"
+          last_answer_at: "2014-10-18T07:47:22.563Z"
         },
-        reply: {
+        answer: {
           id: "543fb7abae523bbc80412b24",
           content: "[@alsotang](/user/alsotang) 哈哈",
           ups: [ ],

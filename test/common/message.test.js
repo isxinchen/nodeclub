@@ -8,25 +8,25 @@ var pedding = require('pedding');
 var multiline = require('multiline');
 var MessageService = require('../../common/message');
 var eventproxy = require('eventproxy');
-var ReplyProxy = require('../../proxy').Reply;
+var AnswerProxy = require('../../proxy').Answer;
 
 describe('test/common/message.test.js', function () {
   var atUser;
   var author;
-  var topic;
-  var reply;
+  var question;
+  var answer;
   before(function (done) {
     var ep = new eventproxy();
 
-    ep.all('topic', function (_topic) {
-      topic = _topic;
+    ep.all('question', function (_question) {
+      question = _question;
       done();
     });
     support.ready(function () {
       atUser = support.normalUser;
       author = atUser;
-      reply = {};
-      support.createTopic(author._id, ep.done('topic'));
+      answer = {};
+      support.createQuestion(author._id, ep.done('question'));
     });
   });
 
@@ -34,12 +34,12 @@ describe('test/common/message.test.js', function () {
     mm.restore();
   });
 
-  describe('#sendReplyMessage', function () {
-    it('should send reply message', function (done) {
-      mm(ReplyProxy, 'getReplyById', function (id, callback) {
+  describe('#sendAnswerMessage', function () {
+    it('should send answer message', function (done) {
+      mm(AnswerProxy, 'getAnswerById', function (id, callback) {
         callback(null, {author: {}});
       });
-      MessageService.sendReplyMessage(atUser._id, author._id, topic._id, reply._id,
+      MessageService.sendAnswerMessage(atUser._id, author._id, question._id, answer._id,
         function (err, msg) {
           request.get('/my/messages')
           .set('Cookie', support.normalUserCookie)
@@ -47,7 +47,7 @@ describe('test/common/message.test.js', function () {
             var texts = [
               author.loginname,
               '回复了你的话题',
-              topic.title,
+              question.title,
             ];
             texts.forEach(function (text) {
               res.text.should.containEql(text)
@@ -60,10 +60,10 @@ describe('test/common/message.test.js', function () {
 
   describe('#sendAtMessage', function () {
     it('should send at message', function (done) {
-      mm(ReplyProxy, 'getReplyById', function (id, callback) {
+      mm(AnswerProxy, 'getAnswerById', function (id, callback) {
         callback(null, {author: {}});
       });
-      MessageService.sendAtMessage(atUser._id, author._id, topic._id, reply._id,
+      MessageService.sendAtMessage(atUser._id, author._id, question._id, answer._id,
         function (err, msg) {
           request.get('/my/messages')
           .set('Cookie', support.normalUserCookie)
@@ -71,7 +71,7 @@ describe('test/common/message.test.js', function () {
             var texts = [
               author.loginname,
               '在话题',
-              topic.title,
+              question.title,
               '中@了你',
             ];
             texts.forEach(function (text) {

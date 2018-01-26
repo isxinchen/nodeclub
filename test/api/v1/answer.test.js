@@ -4,41 +4,41 @@ var pedding = require('pedding');
 var support =  require('../../support/support');
 var should  = require('should');
 
-describe('test/api/v1/reply.test.js', function () {
+describe('test/api/v1/answer.test.js', function () {
   
-  var mockTopic, mockReplyId;
+  var mockQuestion, mockAnswerId;
   
   before(function (done) {
     support.ready(function () {
-      support.createTopic(support.normalUser.id, function (err, topic) {
-        mockTopic = topic;
+      support.createQuestion(support.normalUser.id, function (err, question) {
+        mockQuestion = question;
         done();
       });
     });
   });
 
-  describe('create reply', function () {
+  describe('create answer', function () {
 
     it('should success', function (done) {
-      request.post('/api/v1/topic/' + mockTopic.id + '/replies')
+      request.post('/api/v1/question/' + mockQuestion.id + '/answers')
         .send({
-          content: 'reply a topic from api',
+          content: 'answer a question from api',
           accesstoken: support.normalUser.accessToken
         })
         .end(function (err, res) {
           should.not.exists(err);
           res.body.success.should.true();
-          mockReplyId = res.body.reply_id;
+          mockAnswerId = res.body.answer_id;
           done();
         });
     });
 
     it('should success with repli_id', function (done) {
-      request.post('/api/v1/topic/' + mockTopic.id + '/replies')
+      request.post('/api/v1/question/' + mockQuestion.id + '/answers')
         .send({
-          content: 'reply a topic from api',
+          content: 'answer a question from api',
           accesstoken: support.normalUser.accessToken,
-          repli_id: mockReplyId
+          repli_id: mockAnswerId
         })
         .end(function (err, res) {
           should.not.exists(err);
@@ -48,9 +48,9 @@ describe('test/api/v1/reply.test.js', function () {
     });
 
     it('should 401 when no accessToken', function (done) {
-      request.post('/api/v1/topic/' + mockTopic.id + 'not_valid' + '/replies')
+      request.post('/api/v1/question/' + mockQuestion.id + 'not_valid' + '/answers')
         .send({
-          content: 'reply a topic from api'
+          content: 'answer a question from api'
         })
         .end(function (err, res) {
           should.not.exists(err);
@@ -60,10 +60,10 @@ describe('test/api/v1/reply.test.js', function () {
         });
     });
 
-    it('should fail when topic_id is not valid', function (done) {
-      request.post('/api/v1/topic/' + mockTopic.id + 'not_valid' + '/replies')
+    it('should fail when question_id is not valid', function (done) {
+      request.post('/api/v1/question/' + mockQuestion.id + 'not_valid' + '/answers')
         .send({
-          content: 'reply a topic from api',
+          content: 'answer a question from api',
           accesstoken: support.normalUser.accessToken
         })
         .end(function (err, res) {
@@ -75,7 +75,7 @@ describe('test/api/v1/reply.test.js', function () {
     });
 
     it('should fail when no content', function (done) {
-      request.post('/api/v1/topic/' + mockTopic.id + '/replies')
+      request.post('/api/v1/question/' + mockQuestion.id + '/answers')
         .send({
           content: '',
           accesstoken: support.normalUser.accessToken
@@ -88,16 +88,16 @@ describe('test/api/v1/reply.test.js', function () {
         });
     });
 
-    it('should fail when topic not found', function (done) {
-      var notFoundTopicId = mockTopic.id.split("").reverse().join("");
-      request.post('/api/v1/topic/' + notFoundTopicId + '/replies')
+    it('should fail when question not found', function (done) {
+      var notFoundQuestionId = mockQuestion.id.split("").reverse().join("");
+      request.post('/api/v1/question/' + notFoundQuestionId + '/answers')
         .send({
-          content: 'reply a topic from api',
+          content: 'answer a question from api',
           accesstoken: support.normalUser.accessToken
         })
         .end(function (err, res) {
           should.not.exists(err);
-          if (mockTopic.id === notFoundTopicId) { // 小概率事件id反转之后还不变
+          if (mockQuestion.id === notFoundQuestionId) { // 小概率事件id反转之后还不变
             res.body.success.should.true();
           } else {
             res.status.should.equal(404);
@@ -107,22 +107,22 @@ describe('test/api/v1/reply.test.js', function () {
         });
     });
 
-    it('should fail when topic is locked', function (done) {
-      // 锁住 topic
-      mockTopic.lock = !mockTopic.lock;
-      mockTopic.save(function () {
-        request.post('/api/v1/topic/' + mockTopic.id + '/replies')
+    it('should fail when question is locked', function (done) {
+      // 锁住 question
+      mockQuestion.lock = !mockQuestion.lock;
+      mockQuestion.save(function () {
+        request.post('/api/v1/question/' + mockQuestion.id + '/answers')
           .send({
-            content: 'reply a topic from api',
+            content: 'answer a question from api',
             accesstoken: support.normalUser.accessToken
           })
           .end(function (err, res) {
             should.not.exists(err);
             res.status.should.equal(403);
             res.body.success.should.false();
-            // 解锁 topic
-            mockTopic.lock = !mockTopic.lock;
-            mockTopic.save(function () {
+            // 解锁 question
+            mockQuestion.lock = !mockQuestion.lock;
+            mockQuestion.save(function () {
               done();
             });
           });
@@ -134,7 +134,7 @@ describe('test/api/v1/reply.test.js', function () {
   describe('create ups', function () {
 
     it('should up', function (done) {
-      request.post('/api/v1/reply/' + mockReplyId + '/ups')
+      request.post('/api/v1/answer/' + mockAnswerId + '/ups')
         .send({
           accesstoken: support.normalUser.accessToken
         })
@@ -147,7 +147,7 @@ describe('test/api/v1/reply.test.js', function () {
     });
 
     it('should down', function (done) {
-      request.post('/api/v1/reply/' + mockReplyId + '/ups')
+      request.post('/api/v1/answer/' + mockAnswerId + '/ups')
         .send({
           accesstoken: support.normalUser.accessToken
         })
@@ -160,7 +160,7 @@ describe('test/api/v1/reply.test.js', function () {
     });
 
     it('should 401 when no accessToken', function (done) {
-      request.post('/api/v1/reply/' + mockReplyId + '/ups')
+      request.post('/api/v1/answer/' + mockAnswerId + '/ups')
         .end(function (err, res) {
           should.not.exists(err);
           res.status.should.equal(401);
@@ -169,8 +169,8 @@ describe('test/api/v1/reply.test.js', function () {
         });
     });
 
-    it('should fail when reply_id is not valid', function (done) {
-      request.post('/api/v1/reply/' + mockReplyId + 'not_valid' + '/ups')
+    it('should fail when answer_id is not valid', function (done) {
+      request.post('/api/v1/answer/' + mockAnswerId + 'not_valid' + '/ups')
         .send({
           accesstoken: support.normalUser.accessToken
         })
@@ -182,15 +182,15 @@ describe('test/api/v1/reply.test.js', function () {
         });
     });
 
-    it('should fail when reply_id is not found', function (done) {
-      var notFoundReplyId = mockReplyId.split("").reverse().join("");
-      request.post('/api/v1/reply/' + notFoundReplyId + '/ups')
+    it('should fail when answer_id is not found', function (done) {
+      var notFoundAnswerId = mockAnswerId.split("").reverse().join("");
+      request.post('/api/v1/answer/' + notFoundAnswerId + '/ups')
         .send({
           accesstoken: support.normalUser.accessToken
         })
         .end(function (err, res) {
           should.not.exists(err);
-          if (mockReplyId === notFoundReplyId) { // 小概率事件id反转之后还不变
+          if (mockAnswerId === notFoundAnswerId) { // 小概率事件id反转之后还不变
             res.body.success.should.true();
           } else {
             res.status.should.equal(404);

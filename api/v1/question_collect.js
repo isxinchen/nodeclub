@@ -1,6 +1,6 @@
 var eventproxy = require('eventproxy');
-var TopicProxy   = require('../../proxy').Topic;
-var TopicCollectProxy = require('../../proxy').TopicCollect;
+var QuestionProxy   = require('../../proxy').Question;
+var QuestionCollectProxy = require('../../proxy').QuestionCollect;
 var UserProxy = require('../../proxy').User;
 var _ = require('lodash');
 var validator    = require('validator');
@@ -18,30 +18,30 @@ function list(req, res, next) {
     }
 
     // api 返回 100 条就好了
-    TopicCollectProxy.getTopicCollectsByUserId(user._id, {limit: 100}, ep.done('collected_topics'));
+    QuestionCollectProxy.getQuestionCollectsByUserId(user._id, {limit: 100}, ep.done('collected_questions'));
 
-    ep.all('collected_topics', function (collected_topics) {
+    ep.all('collected_questions', function (collected_questions) {
 
-      var ids = collected_topics.map(function (doc) {
-        return String(doc.topic_id)
+      var ids = collected_questions.map(function (doc) {
+        return String(doc.question_id)
       });
       var query = { _id: { '$in': ids } };
-      TopicProxy.getTopicsByQuery(query, {}, ep.done('topics', function (topics) {
-        topics = _.sortBy(topics, function (topic) {
-          return ids.indexOf(String(topic._id))
+      QuestionProxy.getQuestionsByQuery(query, {}, ep.done('questions', function (questions) {
+        questions = _.sortBy(questions, function (question) {
+          return ids.indexOf(String(question._id))
         });
-        return topics
+        return questions
       }));
 
     });
 
-    ep.all('topics', function (topics) {
-      topics = topics.map(function (topic) {
-        topic.author = _.pick(topic.author, ['loginname', 'avatar_url']);
-        return _.pick(topic, ['id', 'author_id', 'tab', 'content', 'title', 'last_reply_at',
-          'good', 'top', 'reply_count', 'visit_count', 'create_at', 'author']);
+    ep.all('questions', function (questions) {
+      questions = questions.map(function (question) {
+        question.author = _.pick(question.author, ['loginname', 'avatar_url']);
+        return _.pick(question, ['id', 'author_id', 'tab', 'content', 'title', 'last_answer_at',
+          'good', 'top', 'answer_count', 'visit_count', 'create_at', 'author']);
       });
-      res.send({success: true, data: topics})
+      res.send({success: true, data: questions})
 
     })
   }))
@@ -50,23 +50,23 @@ function list(req, res, next) {
 exports.list = list;
 
 function collect(req, res, next) {
-  var topic_id = req.body.topic_id;
+  var question_id = req.body.question_id;
 
-  if (!validator.isMongoId(topic_id)) {
+  if (!validator.isMongoId(question_id)) {
     res.status(400);
     return res.send({success: false, error_msg: '不是有效的话题id'});
   }
 
-  TopicProxy.getTopic(topic_id, function (err, topic) {
+  QuestionProxy.getQuestion(question_id, function (err, question) {
     if (err) {
       return next(err);
     }
-    if (!topic) {
+    if (!question) {
       res.status(404);
       return res.json({success: false, error_msg: '话题不存在'});
     }
 
-    TopicCollectProxy.getTopicCollect(req.user.id, topic._id, function (err, doc) {
+    QuestionCollectProxy.getQuestionCollect(req.user.id, question._id, function (err, doc) {
       if (err) {
         return next(err);
       }
@@ -75,7 +75,7 @@ function collect(req, res, next) {
         return;
       }
 
-      TopicCollectProxy.newAndSave(req.user.id, topic._id, function (err) {
+      QuestionCollectProxy.newAndSave(req.user.id, question._id, function (err) {
         if (err) {
           return next(err);
         }
@@ -85,12 +85,12 @@ function collect(req, res, next) {
         if (err) {
           return next(err);
         }
-        user.collect_topic_count += 1;
+        user.collect_question_count += 1;
         user.save();
       });
 
-      topic.collect_count += 1;
-      topic.save();
+      question.collect_count += 1;
+      question.save();
     });
   });
 }
@@ -98,22 +98,22 @@ function collect(req, res, next) {
 exports.collect = collect;
 
 function de_collect(req, res, next) {
-  var topic_id = req.body.topic_id;
+  var question_id = req.body.question_id;
 
-  if (!validator.isMongoId(topic_id)) {
+  if (!validator.isMongoId(question_id)) {
     res.status(400);
     return res.send({success: false, error_msg: '不是有效的话题id'});
   }
 
-  TopicProxy.getTopic(topic_id, function (err, topic) {
+  QuestionProxy.getQuestion(question_id, function (err, question) {
     if (err) {
       return next(err);
     }
-    if (!topic) {
+    if (!question) {
       res.status(404);
       return res.json({success: false, error_msg: '话题不存在'});
     }
-    TopicCollectProxy.remove(req.user.id, topic._id, function (err, removeResult) {
+    QuestionCollectProxy.remove(req.user.id, question._id, function (err, removeResult) {
       if (err) {
         return next(err);
       }
@@ -125,12 +125,12 @@ function de_collect(req, res, next) {
         if (err) {
           return next(err);
         }
-        user.collect_topic_count -= 1;
+        user.collect_question_count -= 1;
         user.save();
       });
 
-      topic.collect_count -= 1;
-      topic.save();
+      question.collect_count -= 1;
+      question.save();
 
       res.json({success: true});
     });

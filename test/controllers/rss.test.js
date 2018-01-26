@@ -44,25 +44,25 @@ describe('test/controllers/rss.test.js', function () {
       });
     });
 
-    describe('mock `topic.getTopicsByQuery()` error', function () {
-      var topic = require('../../proxy').Topic;
-      var getTopicsByQuery = topic.getTopicsByQuery;
+    describe('mock `question.getQuestionsByQuery()` error', function () {
+      var question = require('../../proxy').Question;
+      var getQuestionsByQuery = question.getQuestionsByQuery;
       before(function () {
-        topic.getTopicsByQuery = function () {
+        question.getQuestionsByQuery = function () {
           var callback = arguments[arguments.length - 1];
           process.nextTick(function () {
-            callback(new Error('mock getTopicsByQuery() error'));
+            callback(new Error('mock getQuestionsByQuery() error'));
           });
         };
       });
       after(function () {
-        topic.getTopicsByQuery = getTopicsByQuery;
+        question.getQuestionsByQuery = getQuestionsByQuery;
       });
 
       it('should return error', function (done) {
         request(app).get('/rss').end(function (err, res) {
           res.status.should.equal(500);
-          res.text.should.containEql('mock getTopicsByQuery() error');
+          res.text.should.containEql('mock getQuestionsByQuery() error');
           done(err);
         });
       });

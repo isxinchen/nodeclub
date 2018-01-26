@@ -16,7 +16,7 @@ var support = require('../support/support');
 var _ = require('lodash');
 var pedding = require('pedding');
 var UserProxy = require('../../proxy/user');
-var ReplyModel = require('../../models').Reply;
+var AnswerModel = require('../../models').Answer;
 
 describe('test/controllers/user.test.js', function () {
   var testUser;
@@ -179,7 +179,7 @@ describe('test/controllers/user.test.js', function () {
     });
   });
 
-  describe('#getCollectTopics', function () {
+  describe('#getCollectQuestions', function () {
     it('should get /user/:name/collections ok', function (done) {
       request.get('/user/' + support.normalUser.loginname + '/collections')
       .expect(200, function (err, res) {
@@ -199,9 +199,9 @@ describe('test/controllers/user.test.js', function () {
     });
   });
 
-  describe('#list_topics', function () {
-    it('should get /user/:name/topics ok', function (done) {
-      request.get('/user/' + support.normalUser.loginname + '/topics')
+  describe('#list_questions', function () {
+    it('should get /user/:name/questions ok', function (done) {
+      request.get('/user/' + support.normalUser.loginname + '/questions')
       .expect(200, function (err, res) {
         res.text.should.containEql('创建的话题');
         done(err);
@@ -210,8 +210,8 @@ describe('test/controllers/user.test.js', function () {
   });
 
   describe('#listReplies', function () {
-    it('should get /user/:name/replies ok', function (done) {
-      request.get('/user/' + support.normalUser.loginname + '/replies')
+    it('should get /user/:name/answers ok', function (done) {
+      request.get('/user/' + support.normalUser.loginname + '/answers')
       .expect(200, function (err, res) {
         res.text.should.containEql(support.normalUser.loginname + ' 参与的话题');
         done(err);
@@ -266,19 +266,19 @@ describe('test/controllers/user.test.js', function () {
     it('should delele all ups', function (done) {
       support.createUser(function (err, user) {
         var userId = user._id;
-        ReplyModel.findOne(function (err, reply) {
+        AnswerModel.findOne(function (err, answer) {
           should.not.exists(err);
-          reply.ups.push(userId);
-          reply.save(function (err, reply) {
-            reply.ups.should.containEql(userId)
+          answer.ups.push(userId);
+          answer.save(function (err, answer) {
+            answer.ups.should.containEql(userId)
 
             request.post('/user/' + user.loginname + '/delete_all')
               .set('Cookie', support.adminUserCookie)
               .expect(200, function (err, res) {
                 res.body.should.eql({ status: 'success' });
 
-                ReplyModel.findOne({_id: reply._id}, function (err, reply) {
-                  reply.ups.should.not.containEql(userId)
+                AnswerModel.findOne({_id: answer._id}, function (err, answer) {
+                  answer.ups.should.not.containEql(userId)
                   done();
                 })
               })

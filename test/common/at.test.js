@@ -11,10 +11,10 @@ var multiline = require('multiline');
 var pedding = require('pedding');
 
 describe('test/common/at.test.js', function () {
-  var testTopic, normalUser, normalUser2, adminUser;
+  var testQuestion, normalUser, normalUser2, adminUser;
   before(function (done) {
     support.ready(function () {
-      testTopic = support.testTopic;
+      testQuestion = support.testQuestion;
       normalUser = support.normalUser;
       normalUser2 = support.normalUser2;
       adminUser = support.adminUser;
@@ -173,7 +173,7 @@ aldjf
         done();
       });
       mm(message, 'sendAtMessage',
-        function (atUserId, authorId, topicId, replyId, callback) {
+        function (atUserId, authorId, questionId, answerId, callback) {
           // String(atUserId).should.equal(String(atUserIds[count++]));
           ep.emit('user_id', String(atUserId));
           callback();
@@ -181,7 +181,7 @@ aldjf
 
       var text = '@' + adminUser.loginname + ' @' + normalUser2.loginname + ' @notexitstuser 你们好';
       at.sendMessageToMentionUsers(text,
-        testTopic._id,
+        testQuestion._id,
         normalUser._id,
         function (err) {
           should.not.exist(err);
@@ -193,7 +193,7 @@ aldjf
       mm(message, 'sendAtMessage', function () {
         throw new Error('should not call me');
       });
-      at.sendMessageToMentionUsers('abc no mentions', testTopic._id, normalUser._id,
+      at.sendMessageToMentionUsers('abc no mentions', testQuestion._id, normalUser._id,
         function (err) {
           should.not.exist(err);
           done();
@@ -206,7 +206,7 @@ aldjf
       });
 
       at.sendMessageToMentionUsers('@' + normalUser.loginname + ' hello',
-        testTopic._id, normalUser._id,
+        testQuestion._id, normalUser._id,
         function (err) {
           should.not.exist(err);
           done();
@@ -225,7 +225,7 @@ aldjf
       it('should return error', function (done) {
         var text = '@' + normalUser.loginname + ' @' + normalUser2.loginname + ' @notexitstuser 你们好';
 
-        at.sendMessageToMentionUsers(text, testTopic._id, normalUser._id,
+        at.sendMessageToMentionUsers(text, testQuestion._id, normalUser._id,
           function (err) {
             should.exist(err);
             err.message.should.equal('mock sendAtMessage() error');

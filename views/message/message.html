@@ -3,20 +3,20 @@
   <% } else { %>
   <div class='cell message' message_id='<%= message._id %>'>
     <% } %>
-    <% if(message.type == 'reply'){ %>
+    <% if(message.type == 'answer'){ %>
 		<span>
 			<a href="/user/<%= message.author.loginname %>" target='_blank'><%= message.author.loginname %></a>
 			回复了你的话题
-			<a href="/topic/<%- message.topic._id + (message.reply ? '#' + message.reply._id : '') %>" target='_blank'><%=
-        message.topic.title %></a>
+			<a href="/question/<%- message.question._id + (message.answer ? '#' + message.answer._id : '') %>" target='_blank'><%=
+        message.question.title %></a>
 		</span>
     <% } %>
-    <% if(message.type == 'reply2'){ %>
+    <% if(message.type == 'answer2'){ %>
 		<span>
 			<a href="/user/<%= message.author.loginname %>" target='_blank'><%= message.author.loginname %></a>
 			在话题
-			<a href="/topic/<%= message.topic._id + (message.reply ? '#' + message.reply._id : '') %>" target='_blank'><%=
-        message.topic.title %></a>
+			<a href="/question/<%= message.question._id + (message.answer ? '#' + message.answer._id : '') %>" target='_blank'><%=
+        message.question.title %></a>
 			中回复了你的回复
 		</span>
     <% } %>
@@ -30,8 +30,8 @@
 		<span>
 			<a href="/user/<%= message.author.loginname %>" target='_blank'><%= message.author.loginname %></a>
 			在话题
-			<a href="/topic/<%= message.topic._id + (message.reply ? '#' + message.reply._id : '') %>" target='_blank'><%=
-        message.topic.title %></a>
+			<a href="/question/<%= message.question._id + (message.answer ? '#' + message.answer._id : '') %>" target='_blank'><%=
+        message.question.title %></a>
 			中@了你
 		</span>
     <% } %>

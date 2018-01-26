@@ -1,0 +1,7 @@
+find . -name "reply*" -exec rename 's/reply/answer/' {} \;
+find . -name "topic*" -exec rename 's/topic/question/' {} \;
+sed -i 's/reply/answer/g' `grep -rl reply ./*`
+sed -i 's/Reply/Answer/g' `grep -rl Reply ./*`
+sed -i 's/topic/question/g' `grep -rl topic ./*`
+sed -i 's/Topic/Question/g' `grep -rl Topic ./*`
+sed -i 's/replies/answers/g' `grep -rl replies ./*`

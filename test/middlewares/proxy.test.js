@@ -30,7 +30,7 @@ describe('test/middlewares/proxy.test.js', function () {
 
     nock('https://avatars.githubusercontent.com')
       .get('/u/1147375?v=3&s=120')
-      .reply(200, 'githubusercontent');
+      .answer(200, 'githubusercontent');
 
     supertest.get('/agent')
       .query({
@@ -46,7 +46,7 @@ describe('test/middlewares/proxy.test.js', function () {
     var url = 'https://gravatar.com/avatar/28d69c69c1c1a040436124238f7cc937?size=48';
     nock('https://gravatar.com')
       .get('/avatar/28d69c69c1c1a040436124238f7cc937?size=48')
-      .reply(200, 'gravatar');
+      .answer(200, 'gravatar');
 
     supertest.get('/agent')
       .query({

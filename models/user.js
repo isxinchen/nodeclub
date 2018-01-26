@@ -23,19 +23,19 @@ var UserSchema = new Schema({
   is_block: {type: Boolean, default: false},
 
   score: { type: Number, default: 0 },
-  topic_count: { type: Number, default: 0 },
-  reply_count: { type: Number, default: 0 },
+  question_count: { type: Number, default: 0 },
+  answer_count: { type: Number, default: 0 },
   follower_count: { type: Number, default: 0 },
   following_count: { type: Number, default: 0 },
   collect_tag_count: { type: Number, default: 0 },
-  collect_topic_count: { type: Number, default: 0 },
+  collect_question_count: { type: Number, default: 0 },
   create_at: { type: Date, default: Date.now },
   update_at: { type: Date, default: Date.now },
   is_star: { type: Boolean },
   level: { type: String },
   active: { type: Boolean, default: false },
 
-  receive_reply_mail: {type: Boolean, default: false },
+  receive_answer_mail: {type: Boolean, default: false },
   receive_at_mail: { type: Boolean, default: false },
   from_wp: { type: Boolean },
 

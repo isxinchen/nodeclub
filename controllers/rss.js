@@ -1,6 +1,6 @@
 var config       = require('../config');
 var convert      = require('data2xml')();
-var Topic        = require('../proxy').Topic;
+var Question        = require('../proxy').Question;
 var cache        = require('../common/cache');
 var renderHelper = require('../common/render_helper');
 var eventproxy   = require('eventproxy');
@@ -23,7 +23,7 @@ exports.index = function (req, res, next) {
         limit: config.rss.max_rss_items,
         sort: '-create_at',
       };
-      Topic.getTopicsByQuery({tab: {$nin: ['dev']}}, opt, function (err, topics) {
+      Question.getQuestionsByQuery({tab: {$nin: ['dev']}}, opt, function (err, questions) {
         if (err) {
           return next(err);
         }
@@ -38,14 +38,14 @@ exports.index = function (req, res, next) {
           }
         };
 
-        topics.forEach(function (topic) {
+        questions.forEach(function (question) {
           rss_obj.channel.item.push({
-            title: topic.title,
-            link: config.rss.link + '/topic/' + topic._id,
-            guid: config.rss.link + '/topic/' + topic._id,
-            description: renderHelper.markdown(topic.content),
-            author: topic.author.loginname,
-            pubDate: topic.create_at.toUTCString()
+            title: question.title,
+            link: config.rss.link + '/question/' + question._id,
+            guid: config.rss.link + '/question/' + question._id,
+            description: renderHelper.markdown(question.content),
+            author: question.author.loginname,
+            pubDate: question.create_at.toUTCString()
           });
         });
 

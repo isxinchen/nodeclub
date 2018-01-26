@@ -12,9 +12,9 @@
   <div class='panel'>
     <div class="header"><%= user.loginname %> 参与的话题</div>
     <div class="inner padding">
-    <% if(typeof(topics) !== 'undefined' && topics.length > 0){ %>
-    <%- partial('../topic/list',
-    {topics:topics,pages:pages,current_pages:current_page,base:'/user/'+user.loginname+'/replies'}) %>
+    <% if(typeof(questions) !== 'undefined' && questions.length > 0){ %>
+    <%- partial('../question/list',
+    {questions:questions,pages:pages,current_pages:current_page,base:'/user/'+user.loginname+'/answers'}) %>
     <% }else{ %>
     <div class='inner'>
       <p>无话题</p>

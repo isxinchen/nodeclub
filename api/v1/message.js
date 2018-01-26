@@ -30,12 +30,12 @@ var index = function (req, res, next) {
         });
         docs = docs.map(function (doc) {
           doc.author = _.pick(doc.author, ['loginname', 'avatar_url']);
-          doc.topic  = _.pick(doc.topic, ['id', 'author', 'title', 'last_reply_at']);
-          doc.reply  = _.pick(doc.reply, ['id', 'content', 'ups', 'create_at']);
+          doc.question  = _.pick(doc.question, ['id', 'author', 'title', 'last_answer_at']);
+          doc.answer  = _.pick(doc.answer, ['id', 'content', 'ups', 'create_at']);
           if (mdrender) {
-            doc.reply.content = renderHelper.markdown(at.linkUsers(doc.reply.content));
+            doc.answer.content = renderHelper.markdown(at.linkUsers(doc.answer.content));
           }
-          doc        = _.pick(doc, ['id', 'type', 'has_read', 'author', 'topic', 'reply', 'create_at']);
+          doc        = _.pick(doc, ['id', 'type', 'has_read', 'author', 'question', 'answer', 'create_at']);
 
           return doc;
         });

@@ -13,7 +13,7 @@ var async = require('async')
  */
 var sendMail = function (data) {
   if (config.debug) {
-    return;
+    // return;
   }
 
   // 重试5次

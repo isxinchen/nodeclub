@@ -50,7 +50,7 @@ var config = {
   port: 3000,
 
   // 话题列表显示的话题数量
-  list_topic_count: 20,
+  list_question_count: 20,
 
   // RSS配置
   rss: {
@@ -131,7 +131,7 @@ var config = {
   },
 
   create_post_per_day: 1000, // 每个用户一天可以发的主题数
-  create_reply_per_day: 1000, // 每个用户一天可以发的评论数
+  create_answer_per_day: 1000, // 每个用户一天可以发的评论数
   create_user_per_ip: 1000,
   visit_per_day: 1000, // 每个 ip 每天能访问的次数
 };

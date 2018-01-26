@@ -11,7 +11,7 @@
 0.3.6 / 2013-11-22
 ==================
 
-  * fix #237 if topic not exists, do not modified it.
+  * fix #237 if question not exists, do not modified it.
   * Merge pull request #230 from JacksonTian/fix_null
   * 修复给空值设置属性的错误
   * Merge pull request #224 from JacksonTian/config_ga
@@ -28,7 +28,7 @@
   * Merge pull request #211 from tjwudi/master
   * Add OS regular files to .gitignore
   * Merge pull request #209 from leizongmin/master
-  * 解决打开Topic时自动跳到输入框问题
+  * 解决打开Question时自动跳到输入框问题
   * Merge pull request #205 from jiyinyiyong/master
   * Merge pull request #208 from leizongmin/master
   * 帖子内容页面，增加表格样式
@@ -78,8 +78,8 @@
   * Update logo based on the new official one (@finian)
   * UI more flatter; use "white-space:pre" to show spaces (@jiyinyiyong)
   * fixed #161 xss process after markdown transfer
-  * 修复reply2的逻辑；暂时屏蔽标签功能
-  * use fixed-width font in reply
+  * 修复answer2的逻辑；暂时屏蔽标签功能
+  * use fixed-width font in answer
   * a text align and a padding
   * add padding to the read messages
   * 点击回复数直接跳到最后一个回复
@@ -115,11 +115,11 @@
 ==================
 
   * Merge pull request #126 from cnodejs/updateSignFlow
-  * 修复topic更新bug；修复@某人 bug
-  * reply2也可以定位到
+  * 修复question更新bug；修复@某人 bug
+  * answer2也可以定位到
   * 修复node 0.6 test cases
   * 修复删除评论异常
-  * 修复 exports.updateLastReply 没有callback的bug
+  * 修复 exports.updateLastAnswer 没有callback的bug
   * 管理员可以帮忙激活账号
   * Merge pull request #125 from JacksonTian/refine
   * Fix http to https
@@ -144,7 +144,7 @@
   * fix issue #27: lower case email address for gravatar
   * Merge pull request #103 from ccding/master
   * fix issue #92: email address with gmail label ("+" encode)
-  * fixed topic delete not post method security problem.
+  * fixed question delete not post method security problem.
   * empty author
   * fixed author empty bug
   * Merge pull request #99 from leizongmin/master
@@ -167,11 +167,11 @@
   * Merge pull request #88 from dead-horse/master
   * fix
   * change @me to markdown
-  * fix @ bug in topic content
+  * fix @ bug in question content
   * Merge pull request #86 from dead-horse/master
   * not escape html in
   * add preview
-  * remove tags in topics of home page
+  * remove tags in questions of home page
   * some css
   * 合并通知按钮
   * use escape replace of xss()

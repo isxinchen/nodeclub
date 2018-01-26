@@ -1,5 +1,5 @@
 /*!
- * nodeclub - controllers/topic.js
+ * nodeclub - controllers/question.js
  */
 
 /**
@@ -10,8 +10,8 @@ var validator = require('validator');
 
 var at           = require('../common/at');
 var User         = require('../proxy').User;
-var Topic        = require('../proxy').Topic;
-var TopicCollect = require('../proxy').TopicCollect;
+var Question        = require('../proxy').Question;
+var QuestionCollect = require('../proxy').QuestionCollect;
 var EventProxy   = require('eventproxy');
 var tools        = require('../common/tools');
 var store        = require('../common/store');
@@ -21,33 +21,33 @@ var cache        = require('../common/cache');
 var logger = require('../common/logger')
 
 /**
- * Topic page
+ * Question page
  *
  * @param  {HttpRequest} req
  * @param  {HttpResponse} res
  * @param  {Function} next
  */
 exports.index = function (req, res, next) {
-  function isUped(user, reply) {
-    if (!reply.ups) {
+  function isUped(user, answer) {
+    if (!answer.ups) {
       return false;
     }
-    return reply.ups.indexOf(user._id) !== -1;
+    return answer.ups.indexOf(user._id) !== -1;
   }
 
-  var topic_id = req.params.tid;
+  var question_id = req.params.tid;
   var currentUser = req.session.user;
 
-  if (topic_id.length !== 24) {
+  if (question_id.length !== 24) {
     return res.render404('此话题不存在或已被删除。');
   }
-  var events = ['topic', 'other_topics', 'no_reply_topics', 'is_collect'];
+  var events = ['question', 'other_questions', 'no_answer_questions', 'is_collect'];
   var ep = EventProxy.create(events,
-    function (topic, other_topics, no_reply_topics, is_collect) {
-    res.render('topic/index', {
-      topic: topic,
-      author_other_topics: other_topics,
-      no_reply_topics: no_reply_topics,
+    function (question, other_questions, no_answer_questions, is_collect) {
+    res.render('question/index', {
+      question: question,
+      author_other_questions: other_questions,
+      no_answer_questions: no_answer_questions,
       is_uped: isUped,
       is_collect: is_collect,
     });
@@ -55,22 +55,22 @@ exports.index = function (req, res, next) {
 
   ep.fail(next);
 
-  Topic.getFullTopic(topic_id, ep.done(function (message, topic, author, replies) {
+  Question.getFullQuestion(question_id, ep.done(function (message, question, author, answers) {
     if (message) {
-      logger.error('getFullTopic error topic_id: ' + topic_id)
+      logger.error('getFullQuestion error question_id: ' + question_id)
       return res.renderError(message);
     }
 
-    topic.visit_count += 1;
-    topic.save();
+    question.visit_count += 1;
+    question.save();
 
-    topic.author  = author;
-    topic.replies = replies;
+    question.author  = author;
+    question.answers = answers;
 
     // 点赞数排名第三的回答，它的点赞数就是阈值
-    topic.reply_up_threshold = (function () {
-      var allUpCount = replies.map(function (reply) {
-        return reply.ups && reply.ups.length || 0;
+    question.answer_up_threshold = (function () {
+      var allUpCount = answers.map(function (answer) {
+        return answer.ups && answer.ups.length || 0;
       });
       allUpCount = _.sortBy(allUpCount, Number).reverse();
 
@@ -81,24 +81,24 @@ exports.index = function (req, res, next) {
       return threshold;
     })();
 
-    ep.emit('topic', topic);
+    ep.emit('question', question);
 
-    // get other_topics
-    var options = { limit: 5, sort: '-last_reply_at'};
-    var query = { author_id: topic.author_id, _id: { '$nin': [ topic._id ] } };
-    Topic.getTopicsByQuery(query, options, ep.done('other_topics'));
+    // get other_questions
+    var options = { limit: 5, sort: '-last_answer_at'};
+    var query = { author_id: question.author_id, _id: { '$nin': [ question._id ] } };
+    Question.getQuestionsByQuery(query, options, ep.done('other_questions'));
 
-    // get no_reply_topics
-    cache.get('no_reply_topics', ep.done(function (no_reply_topics) {
-      if (no_reply_topics) {
-        ep.emit('no_reply_topics', no_reply_topics);
+    // get no_answer_questions
+    cache.get('no_answer_questions', ep.done(function (no_answer_questions) {
+      if (no_answer_questions) {
+        ep.emit('no_answer_questions', no_answer_questions);
       } else {
-        Topic.getTopicsByQuery(
-          { reply_count: 0, tab: {$nin: ['job', 'dev']}},
+        Question.getQuestionsByQuery(
+          { answer_count: 0, tab: {$nin: ['job', 'dev']}},
           { limit: 5, sort: '-create_at'},
-          ep.done('no_reply_topics', function (no_reply_topics) {
-            cache.set('no_reply_topics', no_reply_topics, 60 * 1);
-            return no_reply_topics;
+          ep.done('no_answer_questions', function (no_answer_questions) {
+            cache.set('no_answer_questions', no_answer_questions, 60 * 1);
+            return no_answer_questions;
           }));
       }
     }));
@@ -107,12 +107,12 @@ exports.index = function (req, res, next) {
   if (!currentUser) {
     ep.emit('is_collect', null);
   } else {
-    TopicCollect.getTopicCollect(currentUser._id, topic_id, ep.done('is_collect'))
+    QuestionCollect.getQuestionCollect(currentUser._id, question_id, ep.done('is_collect'))
   }
 };
 
 exports.create = function (req, res, next) {
-  res.render('topic/edit', {
+  res.render('question/edit', {
     tabs: config.tabs
   });
 };
@@ -143,7 +143,7 @@ exports.put = function (req, res, next) {
 
   if (editError) {
     res.status(422);
-    return res.render('topic/edit', {
+    return res.render('question/edit', {
       edit_error: editError,
       title: title,
       content: content,
@@ -151,7 +151,7 @@ exports.put = function (req, res, next) {
     });
   }
 
-  Topic.newAndSave(title, content, tab, req.session.user._id, function (err, topic) {
+  Question.newAndSave(title, content, tab, req.session.user._id, function (err, question) {
     if (err) {
       return next(err);
     }
@@ -159,38 +159,38 @@ exports.put = function (req, res, next) {
     var proxy = new EventProxy();
 
     proxy.all('score_saved', function () {
-      res.redirect('/topic/' + topic._id);
+      res.redirect('/question/' + question._id);
     });
     proxy.fail(next);
     User.getUserById(req.session.user._id, proxy.done(function (user) {
       user.score += 5;
-      user.topic_count += 1;
+      user.question_count += 1;
       user.save();
       req.session.user = user;
       proxy.emit('score_saved');
     }));
 
     //发送at消息
-    at.sendMessageToMentionUsers(content, topic._id, req.session.user._id);
+    at.sendMessageToMentionUsers(content, question._id, req.session.user._id);
   });
 };
 
 exports.showEdit = function (req, res, next) {
-  var topic_id = req.params.tid;
+  var question_id = req.params.tid;
 
-  Topic.getTopicById(topic_id, function (err, topic, tags) {
-    if (!topic) {
+  Question.getQuestionById(question_id, function (err, question, tags) {
+    if (!question) {
       res.render404('此话题不存在或已被删除。');
       return;
     }
 
-    if (String(topic.author_id) === String(req.session.user._id) || req.session.user.is_admin) {
-      res.render('topic/edit', {
+    if (String(question.author_id) === String(req.session.user._id) || req.session.user.is_admin) {
+      res.render('question/edit', {
         action: 'edit',
-        topic_id: topic._id,
-        title: topic.title,
-        content: topic.content,
-        tab: topic.tab,
+        question_id: question._id,
+        title: question.title,
+        content: question.content,
+        tab: question.tab,
         tabs: config.tabs
       });
     } else {
@@ -200,18 +200,18 @@ exports.showEdit = function (req, res, next) {
 };
 
 exports.update = function (req, res, next) {
-  var topic_id = req.params.tid;
+  var question_id = req.params.tid;
   var title    = req.body.title;
   var tab      = req.body.tab;
   var content  = req.body.t_content;
 
-  Topic.getTopicById(topic_id, function (err, topic, tags) {
-    if (!topic) {
+  Question.getQuestionById(question_id, function (err, question, tags) {
+    if (!question) {
       res.render404('此话题不存在或已被删除。');
       return;
     }
 
-    if (topic.author_id.equals(req.session.user._id) || req.session.user.is_admin) {
+    if (question.author_id.equals(req.session.user._id) || req.session.user.is_admin) {
       title   = validator.trim(title);
       tab     = validator.trim(tab);
       content = validator.trim(content);
@@ -228,29 +228,29 @@ exports.update = function (req, res, next) {
       // END 验证
 
       if (editError) {
-        return res.render('topic/edit', {
+        return res.render('question/edit', {
           action: 'edit',
           edit_error: editError,
-          topic_id: topic._id,
+          question_id: question._id,
           content: content,
           tabs: config.tabs
         });
       }
 
       //保存话题
-      topic.title     = title;
-      topic.content   = content;
-      topic.tab       = tab;
-      topic.update_at = new Date();
+      question.title     = title;
+      question.content   = content;
+      question.tab       = tab;
+      question.update_at = new Date();
 
-      topic.save(function (err) {
+      question.save(function (err) {
         if (err) {
           return next(err);
         }
         //发送at消息
-        at.sendMessageToMentionUsers(content, topic._id, req.session.user._id);
+        at.sendMessageToMentionUsers(content, question._id, req.session.user._id);
 
-        res.redirect('/topic/' + topic._id);
+        res.redirect('/question/' + question._id);
 
       });
     } else {
@@ -260,30 +260,30 @@ exports.update = function (req, res, next) {
 };
 
 exports.delete = function (req, res, next) {
-  //删除话题, 话题作者topic_count减1
-  //删除回复，回复作者reply_count减1
-  //删除topic_collect，用户collect_topic_count减1
+  //删除话题, 话题作者question_count减1
+  //删除回复，回复作者answer_count减1
+  //删除question_collect，用户collect_question_count减1
 
-  var topic_id = req.params.tid;
+  var question_id = req.params.tid;
 
-  Topic.getFullTopic(topic_id, function (err, err_msg, topic, author, replies) {
+  Question.getFullQuestion(question_id, function (err, err_msg, question, author, answers) {
     if (err) {
       return res.send({ success: false, message: err.message });
     }
-    if (!req.session.user.is_admin && !(topic.author_id.equals(req.session.user._id))) {
+    if (!req.session.user.is_admin && !(question.author_id.equals(req.session.user._id))) {
       res.status(403);
       return res.send({success: false, message: '无权限'});
     }
-    if (!topic) {
+    if (!question) {
       res.status(422);
       return res.send({ success: false, message: '此话题不存在或已被删除。' });
     }
     author.score -= 5;
-    author.topic_count -= 1;
+    author.question_count -= 1;
     author.save();
 
-    topic.deleted = true;
-    topic.save(function (err) {
+    question.deleted = true;
+    question.save(function (err) {
       if (err) {
         return res.send({ success: false, message: err.message });
       }
@@ -294,27 +294,27 @@ exports.delete = function (req, res, next) {
 
 // 设为置顶
 exports.top = function (req, res, next) {
-  var topic_id = req.params.tid;
+  var question_id = req.params.tid;
   var referer  = req.get('referer');
 
-  if (topic_id.length !== 24) {
+  if (question_id.length !== 24) {
     res.render404('此话题不存在或已被删除。');
     return;
   }
-  Topic.getTopic(topic_id, function (err, topic) {
+  Question.getQuestion(question_id, function (err, question) {
     if (err) {
       return next(err);
     }
-    if (!topic) {
+    if (!question) {
       res.render404('此话题不存在或已被删除。');
       return;
     }
-    topic.top = !topic.top;
-    topic.save(function (err) {
+    question.top = !question.top;
+    question.save(function (err) {
       if (err) {
         return next(err);
       }
-      var msg = topic.top ? '此话题已置顶。' : '此话题已取消置顶。';
+      var msg = question.top ? '此话题已置顶。' : '此话题已取消置顶。';
       res.render('notify/notify', {success: msg, referer: referer});
     });
   });
@@ -322,23 +322,23 @@ exports.top = function (req, res, next) {
 
 // 设为精华
 exports.good = function (req, res, next) {
-  var topicId = req.params.tid;
+  var questionId = req.params.tid;
   var referer = req.get('referer');
 
-  Topic.getTopic(topicId, function (err, topic) {
+  Question.getQuestion(questionId, function (err, question) {
     if (err) {
       return next(err);
     }
-    if (!topic) {
+    if (!question) {
       res.render404('此话题不存在或已被删除。');
       return;
     }
-    topic.good = !topic.good;
-    topic.save(function (err) {
+    question.good = !question.good;
+    question.save(function (err) {
       if (err) {
         return next(err);
       }
-      var msg = topic.good ? '此话题已加精。' : '此话题已取消加精。';
+      var msg = question.good ? '此话题已加精。' : '此话题已取消加精。';
       res.render('notify/notify', {success: msg, referer: referer});
     });
   });
@@ -346,22 +346,22 @@ exports.good = function (req, res, next) {
 
 // 锁定主题，不可再回复
 exports.lock = function (req, res, next) {
-  var topicId = req.params.tid;
+  var questionId = req.params.tid;
   var referer = req.get('referer');
-  Topic.getTopic(topicId, function (err, topic) {
+  Question.getQuestion(questionId, function (err, question) {
     if (err) {
       return next(err);
     }
-    if (!topic) {
+    if (!question) {
       res.render404('此话题不存在或已被删除。');
       return;
     }
-    topic.lock = !topic.lock;
-    topic.save(function (err) {
+    question.lock = !question.lock;
+    question.save(function (err) {
       if (err) {
         return next(err);
       }
-      var msg = topic.lock ? '此话题已锁定。' : '此话题已取消锁定。';
+      var msg = question.lock ? '此话题已锁定。' : '此话题已取消锁定。';
       res.render('notify/notify', {success: msg, referer: referer});
     });
   });
@@ -369,17 +369,17 @@ exports.lock = function (req, res, next) {
 
 // 收藏主题
 exports.collect = function (req, res, next) {
-  var topic_id = req.body.topic_id;
+  var question_id = req.body.question_id;
 
-  Topic.getTopic(topic_id, function (err, topic) {
+  Question.getQuestion(question_id, function (err, question) {
     if (err) {
       return next(err);
     }
-    if (!topic) {
+    if (!question) {
       res.json({status: 'failed'});
     }
 
-    TopicCollect.getTopicCollect(req.session.user._id, topic._id, function (err, doc) {
+    QuestionCollect.getQuestionCollect(req.session.user._id, question._id, function (err, doc) {
       if (err) {
         return next(err);
       }
@@ -388,7 +388,7 @@ exports.collect = function (req, res, next) {
         return;
       }
 
-      TopicCollect.newAndSave(req.session.user._id, topic._id, function (err) {
+      QuestionCollect.newAndSave(req.session.user._id, question._id, function (err) {
         if (err) {
           return next(err);
         }
@@ -398,27 +398,27 @@ exports.collect = function (req, res, next) {
         if (err) {
           return next(err);
         }
-        user.collect_topic_count += 1;
+        user.collect_question_count += 1;
         user.save();
       });
 
-      req.session.user.collect_topic_count += 1;
-      topic.collect_count += 1;
-      topic.save();
+      req.session.user.collect_question_count += 1;
+      question.collect_count += 1;
+      question.save();
     });
   });
 };
 
 exports.de_collect = function (req, res, next) {
-  var topic_id = req.body.topic_id;
-  Topic.getTopic(topic_id, function (err, topic) {
+  var question_id = req.body.question_id;
+  Question.getQuestion(question_id, function (err, question) {
     if (err) {
       return next(err);
     }
-    if (!topic) {
+    if (!question) {
       res.json({status: 'failed'});
     }
-    TopicCollect.remove(req.session.user._id, topic._id, function (err, removeResult) {
+    QuestionCollect.remove(req.session.user._id, question._id, function (err, removeResult) {
       if (err) {
         return next(err);
       }
@@ -430,13 +430,13 @@ exports.de_collect = function (req, res, next) {
         if (err) {
           return next(err);
         }
-        user.collect_topic_count -= 1;
+        user.collect_question_count -= 1;
         req.session.user = user;
         user.save();
       });
 
-      topic.collect_count -= 1;
-      topic.save();
+      question.collect_count -= 1;
+      question.save();
 
       res.json({status: 'success'});
     });

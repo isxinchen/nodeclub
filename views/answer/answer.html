@@ -1,0 +1,69 @@
+<div class='cell answer_area answer_item
+  <%- answer.ups && answer.ups.length >= question.answer_up_threshold ? 'answer_highlight' : '' %>'
+    answer_id="<%= answer._id %>" answer_to_id="<%= answer.answer_id || '' %>" id="<%= answer._id %>">
+  <div class='author_content'>
+    <a href="/user/<%= answer.author.loginname %>" class="user_avatar">
+      <img src="<%= proxy(answer.author.avatar_url) %>" title="<%= answer.author.loginname %>"/></a>
+
+    <div class='user_info'>
+      <a class='dark answer_author' href="/user/<%= answer.author.loginname %>"><%= answer.author.loginname %></a>
+      <a class="answer_time" href="#<%= answer._id %>"><%= indexInCollection + 1 %>楼•<%= answer.create_at_ago()
+        %></a>
+      <% if(answer.author.loginname == question.author.loginname){ %>
+        <span class="answer_by_author">作者</span>
+      <% } %>
+    </div>
+    <div class='user_action'>
+      <span>
+        <i class="fa up_btn
+          <%= (current_user && is_uped(current_user, answer)) ? 'fa-thumbs-up uped' : 'fa-thumbs-o-up' %>
+          <%= (!answer.ups || !answer.ups.length) ? 'invisible' : '' %>" title="喜欢"></i>
+        <span class="up-count">
+          <%= answer.ups && answer.ups.length ? answer.ups.length : '' %>
+        </span>
+      </span>
+      <% if (current_user && current_user.is_admin ||
+      (current_user && current_user._id.toString() == answer.author._id.toString())
+      ) { %>
+      <a href='/answer/<%= answer._id %>/edit' class='edit_answer_btn'>
+        <i class="fa fa-pencil-square-o" title='编辑'></i>
+      </a>
+      <a href='javascript:void(0);' class='delete_answer_btn'>
+        <i class="fa fa-trash" title='删除'></i>
+      </a>
+      <% } %>
+      <span>
+        <% if (current_user){ %>
+          <i class="fa fa-answer answer2_btn" title="回复"></i>
+        <% } %>
+      </span>
+    </div>
+  </div>
+  <div class='answer_content from-<%= answer.author.loginname %>'>
+    <%- markdown(answer.content) %>
+  </div>
+  <div class='clearfix'>
+    <div class='answer2_area'>
+      <% if (current_user) { %>
+      <form class='answer2_form' action='/<%= question._id %>/answer' method='post'>
+        <input type='hidden' name='_csrf' value='<%= csrf %>'/>
+        <input type='hidden' name='answer_id' value='<%= answer._id %>'/>
+
+        <div class='markdown_editor in_editor'>
+          <div class='markdown_in_editor'>
+            <textarea class='span8 editor answer_editor'
+                      id="answer2_editor_<%= answer._id %>" name='r_content' rows='4'></textarea>
+
+            <div class='editor_buttons'>
+              <input class='span-primary answer2_submit_btn submit_btn'
+                     type="submit" data-id='<%= answer._id %>' data-loading-text="回复中.." value="回复">
+            </div>
+          </div>
+
+        </div>
+
+      </form>
+      <% } %>
+    </div>
+  </div>
+</div>

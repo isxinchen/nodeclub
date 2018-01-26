@@ -25,9 +25,9 @@ describe('test/api/v1/message.test.js', function () {
 
   it('should get unread messages', function (done) {
     mm(MessageProxy, 'getMessageById', function (id, callback) {
-      callback(null, {reply: {author: {}}});
+      callback(null, {answer: {author: {}}});
     });
-    message.sendReplyMessage(mockUser.id, mockUser.id, mockUser.id, mockUser.id,
+    message.sendAnswerMessage(mockUser.id, mockUser.id, mockUser.id, mockUser.id,
       function (err) {
         should.not.exists(err);
         request.get('/api/v1/messages')
@@ -43,7 +43,7 @@ describe('test/api/v1/message.test.js', function () {
 
   it('should get unread messages count', function (done) {
     mm(MessageProxy, 'getMessageById', function (id, callback) {
-      callback(null, {reply: {author: {}}});
+      callback(null, {answer: {author: {}}});
     });
     request.get('/api/v1/message/count')
       .query({

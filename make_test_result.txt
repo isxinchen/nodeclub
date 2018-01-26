@@ -21,8 +21,8 @@ npm WARN unmet dependency which is version 2.7.3
     ✓ should allow gravatar.com
 
   test/common/message.test.js
-    #sendReplyMessage
-      ✓ should send reply message (224ms)
+    #sendAnswerMessage
+      ✓ should send answer message (224ms)
     #sendAtMessage
       ✓ should send at message (203ms)
 
@@ -117,14 +117,14 @@ npm WARN unmet dependency which is version 2.7.3
       ✓ should not set star user when no user_id (55ms)
       ✓ should set star user (50ms)
       ✓ should unset star user (48ms)
-    #getCollectTopics
+    #getCollectQuestions
       ✓ should get /user/:name/collections ok (85ms)
     #top100
       ✓ should get /users/top100 (216ms)
-    #list_topics
-      ✓ should get /user/:name/topics ok (156ms)
+    #list_questions
+      ✓ should get /user/:name/questions ok (156ms)
     #listReplies
-      ✓ should get /user/:name/replies ok (100ms)
+      ✓ should get /user/:name/answers ok (100ms)
     #block
       ✓ should block user (710ms)
       ✓ should unblock user (53ms)
@@ -135,21 +135,21 @@ npm WARN unmet dependency which is version 2.7.3
   test/controllers/search.test.js
     ✓ should redirect to google search
 
-  test/controllers/reply.test.js
-    reply1
-      ✓ should add a reply1 (77ms)
-      ✓ should 422 when add a empty reply1
-      ✓ should not add a reply1 when not login
-    edit reply
+  test/controllers/answer.test.js
+    answer1
+      ✓ should add a answer1 (77ms)
+      ✓ should 422 when add a empty answer1
+      ✓ should not add a answer1 when not login
+    edit answer
       ✓ should not show edit page when not author (63ms)
       ✓ should show edit page when is author (40ms)
       ✓ should update edit (46ms)
-    upvote reply
+    upvote answer
       ✓ should increase
       5) should decrease
-    delete reply
+    delete answer
       ✓ should should not delete when not author
-      ✓ should delete reply when author
+      ✓ should delete answer when author
 
   test/controllers/site.test.js
     ✓ should / 200 (428ms)
@@ -174,46 +174,46 @@ npm WARN unmet dependency which is version 2.7.3
       ✓ should return `application/xml` Content-Type (114ms)
       mock `config.rss` not set
         ✓ should return waring message
-      mock `topic.getTopicsByQuery()` error
+      mock `question.getQuestionsByQuery()` error
         ✓ should return error
 
-  test/controllers/topic.test.js
+  test/controllers/question.test.js
     #index
-      ✓ should get /topic/:tid 200 (141ms)
-      ✓ should get /topic/:tid 200 when login in (119ms)
+      ✓ should get /question/:tid 200 (141ms)
+      ✓ should get /question/:tid 200 when login in (119ms)
     #create
       ✓ should show a create page
     #put
-      ✓ should not create a topic when no title
-      ✓ should not create a topic when no tab
-      ✓ should not create a topic when no content
-      ✓ should create a topic (69ms)
+      ✓ should not create a question when no title
+      ✓ should not create a question when no tab
+      ✓ should not create a question when no content
+      ✓ should create a question (69ms)
     #showEdit
       ✓ should show a edit page (50ms)
     #update
-      ✓ should update a topic (47ms)
+      ✓ should update a question (47ms)
     #delete
-      ✓ should not delete a topic when not author
-      ✓ should delele a topic (44ms)
+      ✓ should not delete a question when not author
+      ✓ should delele a question (44ms)
     #top
-      ✓ should top a topic (50ms)
-      ✓ should untop a topic (38ms)
+      ✓ should top a question (50ms)
+      ✓ should untop a question (38ms)
     #good
-      ✓ should good a topic (39ms)
-      ✓ should ungood a topic
+      ✓ should good a question (39ms)
+      ✓ should ungood a question
     #collect
-      ✓ should collect a topic (94ms)
-      ✓ should not collect a topic twice
+      ✓ should collect a question (94ms)
+      ✓ should not collect a question twice
     #de_collect
-      ✓ should decollect a topic
-      ✓ should not decollect a non-exist topic_collect
+      ✓ should decollect a question
+      ✓ should not decollect a non-exist question_collect
     #upload
       ✓ should upload a file (56ms)
     #lock
-      ✓ should lock a topic
-      ✓ should not reply a locked topic
-      ✓ should unlock a topic (44ms)
-      ✓ should reply a unlocked topic (77ms)
+      ✓ should lock a question
+      ✓ should not answer a locked question
+      ✓ should unlock a question (44ms)
+      ✓ should answer a unlocked question (77ms)
 
   test/api/v1/message.test.js
     ✓ should get unread messages (67ms)
@@ -225,75 +225,75 @@ npm WARN unmet dependency which is version 2.7.3
       ✓ should return user info
       ✓ should fail when user is not found
 
-  test/api/v1/topic_collect.test.js
-    before collect topic
-      get /topic_collect/:loginname
-        ✓ should list topic with length = 0
-      get /api/v1/topic/:topicid
-        ✓ should return topic info with is_collect = false
-    post /topic_collect/collect
+  test/api/v1/question_collect.test.js
+    before collect question
+      get /question_collect/:loginname
+        ✓ should list question with length = 0
+      get /api/v1/question/:questionid
+        ✓ should return question info with is_collect = false
+    post /question_collect/collect
       ✓ should 401 with no accessToken
-      ✓ should collect topic with correct accessToken (56ms)
-      ✓ should not collect topic twice
-      ✓ should fail when topic_id is not valid
-      ✓ should fail when topic not found
-    after collect topic
-      get /topic_collect/:loginname
-        ✓ should list topic with length = 1 (55ms)
+      ✓ should collect question with correct accessToken (56ms)
+      ✓ should not collect question twice
+      ✓ should fail when question_id is not valid
+      ✓ should fail when question not found
+    after collect question
+      get /question_collect/:loginname
+        ✓ should list question with length = 1 (55ms)
         ✓ should fail when user not found
-      get /api/v1/topic/:topicid
-        ✓ should return topic info with is_collect = true
-    post /topic_collect/de_collect
+      get /api/v1/question/:questionid
+        ✓ should return question info with is_collect = true
+    post /question_collect/de_collect
       ✓ should 401 with no accessToken
-      ✓ should decollect topic with correct accessToken
-      ✓ should not decollect topic twice
-      ✓ should fail when topic_id is not valid
-      ✓ should fail when topic not found
-    after decollect topic
-      get /topic_collect/:loginname
-        ✓ should list topic with length = 0
-      get /api/v1/topic/:topicid
-        ✓ should return topic info with is_collect = false
+      ✓ should decollect question with correct accessToken
+      ✓ should not decollect question twice
+      ✓ should fail when question_id is not valid
+      ✓ should fail when question not found
+    after decollect question
+      get /question_collect/:loginname
+        ✓ should list question with length = 0
+      get /api/v1/question/:questionid
+        ✓ should return question info with is_collect = false
 
-  test/api/v1/reply.test.js
-    create reply
+  test/api/v1/answer.test.js
+    create answer
       ✓ should success (42ms)
       ✓ should success with repli_id (70ms)
       ✓ should 401 when no accessToken
-      ✓ should fail when topic_id is not valid
+      ✓ should fail when question_id is not valid
       ✓ should fail when no content
-      ✓ should fail when topic not found
-      ✓ should fail when topic is locked (40ms)
+      ✓ should fail when question not found
+      ✓ should fail when question is locked (40ms)
     create ups
       ✓ should up
       6) should down
       ✓ should 401 when no accessToken
-      ✓ should fail when reply_id is not valid
-      ✓ should fail when reply_id is not found (49ms)
+      ✓ should fail when answer_id is not valid
+      ✓ should fail when answer_id is not found (49ms)
 
   test/api/v1/tools.test.js
     ✓ should response with loginname
     ✓ should 401 when accessToken is wrong
 
-  test/api/v1/topic.test.js
-    get /api/v1/topics
-      ✓ should return topics (208ms)
-      ✓ should return topics with limit 2
-    get /api/v1/topic/:topicid
-      ✓ should return topic info
-      ✓ should fail when topic_id is not valid
-      ✓ should fail when topic not found
+  test/api/v1/question.test.js
+    get /api/v1/questions
+      ✓ should return questions (208ms)
+      ✓ should return questions with limit 2
+    get /api/v1/question/:questionid
+      ✓ should return question info
+      ✓ should fail when question_id is not valid
+      ✓ should fail when question not found
       ✓ should is_uped to be false without accesstoken
       ✓ should is_uped to be false with wrong accesstoken
       7) should is_uped to be true with right accesstoken
-    post /api/v1/topics
-      ✓ should create a topic (60ms)
+    post /api/v1/questions
+      ✓ should create a question (60ms)
       ✓ should 401 with no accessToken
       ✓ should fail with no title
       ✓ should fail with error tab
       ✓ should fail with no content
-    post /api/v1/topics/update
-      ✓ should update a topic
+    post /api/v1/questions/update
+      ✓ should update a question
 
   test/models/user.test.js
     ✓ should return proxy avatar url
@@ -384,7 +384,7 @@ npm WARN unmet dependency which is version 2.7.3
     at TCP.onread (net.js:529:20)
 
 
-  5) test/controllers/reply.test.js upvote reply should decrease:
+  5) test/controllers/answer.test.js upvote answer should decrease:
 
       Uncaught AssertionError: expected Object { action: 'up', success: true } to equal Object { action: 'down', success: true } (at action, A has 'up' and B has 'down')
       + expected - actual
@@ -397,13 +397,13 @@ npm WARN unmet dependency which is version 2.7.3
 
     at Assertion.fail (node_modules/should/lib/assertion.js:92:17)
     at Assertion.Object.defineProperty.value (node_modules/should/lib/assertion.js:164:19)
-    at Test.<anonymous> (test/controllers/reply.test.js:116:25)
+    at Test.<anonymous> (test/controllers/answer.test.js:116:25)
     at Test.assert (node_modules/supertest/lib/test.js:156:6)
     at Server.assert (node_modules/supertest/lib/test.js:127:12)
     at emitCloseNT (net.js:1519:8)
 
 
-  6) test/api/v1/reply.test.js create ups should down:
+  6) test/api/v1/answer.test.js create ups should down:
 
       Uncaught AssertionError: expected 'up' to be 'down'
       + expected - actual
@@ -413,17 +413,17 @@ npm WARN unmet dependency which is version 2.7.3
 
     at Assertion.fail (node_modules/should/lib/assertion.js:92:17)
     at Assertion.Object.defineProperty.value (node_modules/should/lib/assertion.js:164:19)
-    at Test.<anonymous> (test/api/v1/reply.test.js:157:34)
+    at Test.<anonymous> (test/api/v1/answer.test.js:157:34)
     at Test.assert (node_modules/supertest/lib/test.js:156:6)
     at Server.assert (node_modules/supertest/lib/test.js:127:12)
     at emitCloseNT (net.js:1519:8)
 
 
-  7) test/api/v1/topic.test.js get /api/v1/topic/:topicid should is_uped to be true with right accesstoken:
+  7) test/api/v1/question.test.js get /api/v1/question/:questionid should is_uped to be true with right accesstoken:
      Uncaught AssertionError: expected false to be true
     at Assertion.fail (node_modules/should/lib/assertion.js:92:17)
     at Assertion.Object.defineProperty.value (node_modules/should/lib/assertion.js:164:19)
-    at Test.<anonymous> (test/api/v1/topic.test.js:119:55)
+    at Test.<anonymous> (test/api/v1/question.test.js:119:55)
     at Test.assert (node_modules/supertest/lib/test.js:156:6)
     at Server.assert (node_modules/supertest/lib/test.js:127:12)
     at emitCloseNT (net.js:1519:8)
