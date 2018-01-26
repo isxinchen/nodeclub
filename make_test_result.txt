@@ -1,0 +1,440 @@
+➜  workspace git:(master) ✗ make test
+npm WARN unmet dependency /home/coding/workspace/node_modules/loader-connect requires babel-core@'~6.7.0' but will load
+npm WARN unmet dependency /home/coding/workspace/node_modules/babel-core,
+npm WARN unmet dependency which is version 6.26.0
+npm WARN unmet dependency /home/coding/workspace/node_modules/loader-connect requires less@'~2.6.1' but will load
+npm WARN unmet dependency /home/coding/workspace/node_modules/less,
+npm WARN unmet dependency which is version 2.7.3
+
+
+  test/middlewares/conf.test.js
+    ✓ should alert no github oauth
+
+  test/middlewares/limit.test.js
+    #peripperday
+      ✓ should visit (144ms)
+      ✓ should not visit
+
+  test/middlewares/proxy.test.js
+    ✓ should forbidden google.com
+    ✓ should allow githubusercontent.com (87ms)
+    ✓ should allow gravatar.com
+
+  test/common/message.test.js
+    #sendReplyMessage
+      ✓ should send reply message (224ms)
+    #sendAtMessage
+      ✓ should send at message (203ms)
+
+  test/common/store_local.test.js
+    ✓ should upload a file (1014ms)
+
+  test/common/cache.test.js
+    ✓ should set && get
+    ✓ should expire (1504ms)
+
+  test/common/at.test.js
+    #fetchUsers()
+      ✓ should found 6 users
+      ✓ should found 0 user in text
+    #linkUsers()
+      ✓ should link all mention users
+    sendMessageToMentionUsers()
+      ✓ should send message to all mention users
+      ✓ should not send message to no mention users
+      ✓ should not send at msg to author
+      mock message.sendAtMessage() error
+        ✓ should return error
+
+  test/common/tools.test.js
+    ✓ should format date
+    ✓ should format date friendly
+
+  test/common/render_helper.test.js
+    #markdown
+      ✓ should render code inline
+      ✓ should render fence
+      ✓ should render code block
+    #escapeSignature
+      ✓ should escape content
+    #tabName
+      ✓ should translate
+
+  test/common/mail.test.js
+    sendActiveMail
+      ✓ should ok
+    sendResetPassMail
+      ✓ should ok
+
+  test/controllers/message.test.js
+    index
+      ✓ should 403 without session
+      ✓ should 200 (123ms)
+
+  test/controllers/static.test.js
+    ✓ should get /about (112ms)
+    ✓ should get /faq
+    ✓ should get /getstart (49ms)
+    ✓ should get /robots.txt
+
+  test/controllers/sign.test.js
+    sign up
+      ✓ should visit sign up page
+      ✓ should redirect to github oauth page
+      ✓ should sign up a user (826ms)
+      ✓ should not sign up a user when loginname is exists
+      ✓ should not sign up a user when email is exists (41ms)
+    login in
+      ✓ should visit sign in page
+      ✓ should error when no loginname or no pass
+      ✓ should not login in when not actived (805ms)
+    sign out
+      ✓ should sign out
+    active
+      ✓ should active account (72ms)
+    when new user is actived
+      ✓ should login in successful (687ms)
+    search pass
+      ✓ should 200 when get /search_pass
+      1) should update search pass
+      2) should 200 when get /reset_pass
+      ✓ should 403 get /reset_pass when with wrong resetKey (41ms)
+      3) should update passwork
+
+  test/controllers/user.test.js
+    #index
+      ✓ should show user index (101ms)
+    #listStars
+      ✓ should show star uses
+    #showSetting
+      ✓ should show setting page (82ms)
+      ✓ should show success info (48ms)
+    #setting
+      ✓ should change user setting
+      ✓ should change user password (1366ms)
+      ✓ should not change user password when old_pass is wrong (771ms)
+    #toggleStar
+      ✓ should not set star user when no user_id (55ms)
+      ✓ should set star user (50ms)
+      ✓ should unset star user (48ms)
+    #getCollectTopics
+      ✓ should get /user/:name/collections ok (85ms)
+    #top100
+      ✓ should get /users/top100 (216ms)
+    #list_topics
+      ✓ should get /user/:name/topics ok (156ms)
+    #listReplies
+      ✓ should get /user/:name/replies ok (100ms)
+    #block
+      ✓ should block user (710ms)
+      ✓ should unblock user (53ms)
+      ✓ should wrong when user is not exists
+    #delete_all
+      4) should delele all ups
+
+  test/controllers/search.test.js
+    ✓ should redirect to google search
+
+  test/controllers/reply.test.js
+    reply1
+      ✓ should add a reply1 (77ms)
+      ✓ should 422 when add a empty reply1
+      ✓ should not add a reply1 when not login
+    edit reply
+      ✓ should not show edit page when not author (63ms)
+      ✓ should show edit page when is author (40ms)
+      ✓ should update edit (46ms)
+    upvote reply
+      ✓ should increase
+      5) should decrease
+    delete reply
+      ✓ should should not delete when not author
+      ✓ should delete reply when author
+
+  test/controllers/site.test.js
+    ✓ should / 200 (428ms)
+    ✓ should /?page=-1 200 (209ms)
+    ✓ should /sitemap.xml 200 (46ms)
+    ✓ should /app/download
+
+  test/controllers/github.test.js
+    ✓ should 302 when get /auth/github
+    get /auth/github/callback
+      ✓ should redirect to /auth/github/new when the github id not in database
+      ✓ should redirect to / when the user is registed
+    get /auth/github/new
+      ✓ should 200 (164ms)
+    post /auth/github/create
+      ✓ should create a new user (84ms)
+      ✓ should not create a new user when loginname or email conflict
+      ✓ should link a old user (1233ms)
+
+  test/controllers/rss.test.js
+    /rss
+      ✓ should return `application/xml` Content-Type (114ms)
+      mock `config.rss` not set
+        ✓ should return waring message
+      mock `topic.getTopicsByQuery()` error
+        ✓ should return error
+
+  test/controllers/topic.test.js
+    #index
+      ✓ should get /topic/:tid 200 (141ms)
+      ✓ should get /topic/:tid 200 when login in (119ms)
+    #create
+      ✓ should show a create page
+    #put
+      ✓ should not create a topic when no title
+      ✓ should not create a topic when no tab
+      ✓ should not create a topic when no content
+      ✓ should create a topic (69ms)
+    #showEdit
+      ✓ should show a edit page (50ms)
+    #update
+      ✓ should update a topic (47ms)
+    #delete
+      ✓ should not delete a topic when not author
+      ✓ should delele a topic (44ms)
+    #top
+      ✓ should top a topic (50ms)
+      ✓ should untop a topic (38ms)
+    #good
+      ✓ should good a topic (39ms)
+      ✓ should ungood a topic
+    #collect
+      ✓ should collect a topic (94ms)
+      ✓ should not collect a topic twice
+    #de_collect
+      ✓ should decollect a topic
+      ✓ should not decollect a non-exist topic_collect
+    #upload
+      ✓ should upload a file (56ms)
+    #lock
+      ✓ should lock a topic
+      ✓ should not reply a locked topic
+      ✓ should unlock a topic (44ms)
+      ✓ should reply a unlocked topic (77ms)
+
+  test/api/v1/message.test.js
+    ✓ should get unread messages (67ms)
+    ✓ should get unread messages count
+    ✓ should mark all messages read (80ms)
+
+  test/api/v1/user.test.js
+    get /api/v1/user/:loginname
+      ✓ should return user info
+      ✓ should fail when user is not found
+
+  test/api/v1/topic_collect.test.js
+    before collect topic
+      get /topic_collect/:loginname
+        ✓ should list topic with length = 0
+      get /api/v1/topic/:topicid
+        ✓ should return topic info with is_collect = false
+    post /topic_collect/collect
+      ✓ should 401 with no accessToken
+      ✓ should collect topic with correct accessToken (56ms)
+      ✓ should not collect topic twice
+      ✓ should fail when topic_id is not valid
+      ✓ should fail when topic not found
+    after collect topic
+      get /topic_collect/:loginname
+        ✓ should list topic with length = 1 (55ms)
+        ✓ should fail when user not found
+      get /api/v1/topic/:topicid
+        ✓ should return topic info with is_collect = true
+    post /topic_collect/de_collect
+      ✓ should 401 with no accessToken
+      ✓ should decollect topic with correct accessToken
+      ✓ should not decollect topic twice
+      ✓ should fail when topic_id is not valid
+      ✓ should fail when topic not found
+    after decollect topic
+      get /topic_collect/:loginname
+        ✓ should list topic with length = 0
+      get /api/v1/topic/:topicid
+        ✓ should return topic info with is_collect = false
+
+  test/api/v1/reply.test.js
+    create reply
+      ✓ should success (42ms)
+      ✓ should success with repli_id (70ms)
+      ✓ should 401 when no accessToken
+      ✓ should fail when topic_id is not valid
+      ✓ should fail when no content
+      ✓ should fail when topic not found
+      ✓ should fail when topic is locked (40ms)
+    create ups
+      ✓ should up
+      6) should down
+      ✓ should 401 when no accessToken
+      ✓ should fail when reply_id is not valid
+      ✓ should fail when reply_id is not found (49ms)
+
+  test/api/v1/tools.test.js
+    ✓ should response with loginname
+    ✓ should 401 when accessToken is wrong
+
+  test/api/v1/topic.test.js
+    get /api/v1/topics
+      ✓ should return topics (208ms)
+      ✓ should return topics with limit 2
+    get /api/v1/topic/:topicid
+      ✓ should return topic info
+      ✓ should fail when topic_id is not valid
+      ✓ should fail when topic not found
+      ✓ should is_uped to be false without accesstoken
+      ✓ should is_uped to be false with wrong accesstoken
+      7) should is_uped to be true with right accesstoken
+    post /api/v1/topics
+      ✓ should create a topic (60ms)
+      ✓ should 401 with no accessToken
+      ✓ should fail with no title
+      ✓ should fail with error tab
+      ✓ should fail with no content
+    post /api/v1/topics/update
+      ✓ should update a topic
+
+  test/models/user.test.js
+    ✓ should return proxy avatar url
+
+  test/app.test.js
+    ✓ should / status 200 (197ms)
+
+
+  161 passing (25s)
+  7 failing
+
+  1) test/controllers/sign.test.js search pass should update search pass:
+
+      Uncaught AssertionError: expected '轮子社区 <club@126.com>' to be 'Nodeclub <club@126.com>'
+      + expected - actual
+
+      -轮子社区 <club@126.com>
+      +Nodeclub <club@126.com>
+
+    at Assertion.fail (node_modules/should/lib/assertion.js:92:17)
+    at Assertion.Object.defineProperty.value (node_modules/should/lib/assertion.js:164:19)
+    at Object.sendMail (test/controllers/sign.test.js:185:26)
+    at Object.exports.sendResetPassMail (common/mail.js:78:11)
+    at controllers/sign.js:227:12
+    at model.<anonymous> (node_modules/mongoose/lib/document.js:1824:20)
+    at next_ (node_modules/mongoose/node_modules/hooks-fixed/hooks.js:89:34)
+    at fnWrapper (node_modules/mongoose/node_modules/hooks-fixed/hooks.js:186:18)
+    at node_modules/mongoose/lib/model.js:292:13
+    at node_modules/mongoose/lib/model.js:227:5
+    at node_modules/mongoose/lib/model.js:167:9
+    at handleCallback (node_modules/mongoose/node_modules/mongodb/lib/utils.js:96:12)
+    at node_modules/mongoose/node_modules/mongodb/lib/collection.js:1010:5
+    at commandCallback (node_modules/mongoose/node_modules/mongodb/node_modules/mongodb-core/lib/topologies/server.js:1142:9)
+    at [object Object].Callbacks.emit (node_modules/mongoose/node_modules/mongodb/node_modules/mongodb-core/lib/topologies/server.js:116:3)
+    at [object Object].messageHandler (node_modules/mongoose/node_modules/mongodb/node_modules/mongodb-core/lib/topologies/server.js:291:23)
+    at Socket.<anonymous> (node_modules/mongoose/node_modules/mongodb/node_modules/mongodb-core/lib/connection/connection.js:285:22)
+    at readableAddChunk (_stream_readable.js:146:16)
+    at Socket.Readable.push (_stream_readable.js:110:10)
+    at TCP.onread (net.js:529:20)
+
+
+  2) test/controllers/sign.test.js search pass should 200 when get /reset_pass:
+     Uncaught AssertionError: expected '<!DOCTYPE html>\n<html xmlns="http://www.w3.org/1999/xhtml">\n<head>\n  <!-- meta -->\n  <meta charset="utf-8"/>\n  <meta name=\'description\' content=\'\'>\n  <meta name="viewport" content="width=device-width, initial-scale=1"/>\n  <meta name="keywords" content=""/>\n  <!-- see http://smerity.com/articles/2013/where_did_all_the_http_referrers_go.html -->\n  <meta name="referrer" content="always">\n\n  \n  <meta name="author" content="EDP@TAOBAO" />\n  \n\n  <link title="RSS" type="application/rss+xml" rel="alternate" href="/rss"/>\n\n  \n  <link rel="icon" href="/public/images/cnode_icon_32.png" type="image/x-icon"/>\n  \n\n  <!-- style -->\n <link rel="stylesheet" href="/public/libs/bootstrap/css/bootstrap.css?v=1516893159916" media="all" />\n<link rel="stylesheet" href="/public/stylesheets/common.css?v=1516893159916" media="all" />\n<link rel="stylesheet" href="/public/stylesheets/style.less?v=1516893159916" media="all" />\n<link rel="stylesheet" href="/public/stylesheets/responsive.css?v=1516893159916" media="all" />\n<link rel="stylesheet" href="/public/stylesheets/jquery.atwho.css?v=1516893159916" media="all" />\n<link rel="stylesheet" href="/public/libs/editor/editor.css?v=1516893159916" media="all" />\n<link rel="stylesheet" href="/public/libs/webuploader/webuploader.css?v=1516893159916" media="all" />\n<link rel="stylesheet" href="/public/libs/code-prettify/prettify.css?v=1516893159916" media="all" />\n<link rel="stylesheet" href="/public/libs/font-awesome/css/font-awesome.css?v=1516893159916" media="all" />\n\n\n  <!-- scripts -->\n  <script src="/public/libs/jquery-2.1.0.js?v=1516893159916"></script>\n<script src="/public/libs/lodash.compat.js?v=1516893159916"></script>\n<script src="/public/libs/jquery-ujs.js?v=1516893159916"></script>\n<script src="/public/libs/bootstrap/js/bootstrap.js?v=1516893159916"></script>\n<script src="/public/libs/jquery.caret.js?v=1516893159916"></script>\n<script src="/public/libs/jquery.atwho.js?v=1516893159916"></script>\n<script src="/public/libs/markdownit.js?v=1516893159916"></script>\n<script src="/public/libs/code-prettify/prettify.js?v=1516893159916"></script>\n<script src="/public/libs/qrcode.js?v=1516893159916"></script>\n<script src="/public/javascripts/main.js?v=1516893159916"></script>\n<script src="/public/javascripts/responsive.js?v=1516893159916"></script>\n\n\n  \n  <title></title>\n  \n  <meta content="_csrf" name="csrf-param">\n  <meta content="" name="csrf-token">\n</head>\n<body>\n<!-- navbar -->\n<div class=\'navbar\'>\n  <div class=\'navbar-inner\'>\n    <div class=\'container\'>\n      <a class=\'brand\' href=\'/\'>\n        \n          <img src="/public/images/cnodejs_light.svg" />\n        \n      </a>\n\n      <form id=\'search_form\' class=\'navbar-search\' action="/search">\n        <input type=\'text\' id=\'q\' name=\'q\' class=\'search-query span3\' value=\'\'/>\n      </form>\n      <ul class=\'nav pull-right\'>\n        <li><a href=\'/\'>首页</a></li>\n        \n        <li><a href=\'/getstart\'>新手入门</a></li>\n        <li><a href=\'/api\'>API</a></li>\n        \n        <li><a href="/about" target="">关于</a></li>\n        \n        \n        <li><a href=\'/signup\'>注册</a></li>\n        <li><a href=\'/signin\'>登录</a></li>\n        \n      </ul>\n      <a class="btn btn-navbar" id="responsive-sidebar-trigger">\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n      </a>\n    </div>\n  </div>\n</div>\n<div id=\'main\'>\n  <div id=\'sidebar\'>\n\n  <div class=\'panel\'>\n    \n  <div class=\'inner\'>\n      <p></p>\n\n      <div>\n        您可以\n        <a href=\'/signin\'>登录</a>\n        或\n        <a href=\'/signup\'>注册</a>\n        , 也可以\n        <a href="/auth/github">\n          <span class="span-info">\n            通过 GitHub 登录\n          </span>\n        </a>\n      </div>\n    </div>\n    \n  </div>\n\n  \n\n  \n    \n  \n\n  \n\n  \n\n  <div class=\'panel\'>\n    <div class=\'header\'>\n      <span class=\'col_fade\'>友情社区</span>\n    </div>\n    <div class=\'inner\'>\n      <ol class="friendship-community">\n        <li>\n          <a href="https://ruby-china.org/" target="_blank">\n            <img src="/public/images/ruby-china-20150529.png">\n          </a>\n        </li>\n        <div class="sep10"></div>\n        <li>\n          <a href="http://golangtc.com/" target="_blank">\n            <img src="/public/images/golangtc-logo.png">\n          </a>\n        </li>\n        <div class="sep10"></div>\n        <li>\n          <a href="http://phphub.org/" target="_blank">\n            <img src="/public/images/phphub-logo.png">\n          </a>\n        </li>\n      </ol>\n    </div>\n  </div>\n  <div class=\'panel\'>\n    <div class=\'header\'>\n      <span class=\'col_fade\'>客户端二维码</span>\n    </div>\n    <div class=\'inner cnode-app-download\'>\n      <img width=\'200\' src="//dn-cnode.qbox.me/FtG0YVgQ6iginiLpf9W4_ShjiLfU">\n      <br />\n      <a href="https://github.com/soliury/noder-react-native" target="_blank">客户端源码地址</a>\n    </div>\n  </div>\n\n</div>\n\n\n<div id=\'content\'>\n  <div class=\'panel\'>\n    <div class=\'header\'>\n      <ul class=\'breadcrumb\'>\n        <li><a href=\'/\'>主页</a><span class=\'divider\'>/</span></li>\n        <li class=\'active\'>通知</li>\n      </ul>\n    </div>\n    <div class=\'inner\'>\n      \n      <div class="alert alert-error">\n        <strong>信息有误，密码无法重置。</strong>\n      </div>\n      \n      \n\n        <a href="/"><span class="span-common">返回</span></a>\n\n    </div>\n  </div>\n</div>\n\n</div>\n<div id=\'backtotop\'>回到顶部</div>\n<div id=\'footer\'>\n  <div id=\'footer_main\'>\n    <div class="links">\n      <a class=\'dark\' href=\'/rss\'>RSS</a>\n      |\n      <a class=\'dark\' href=\'https://github.com/cnodejs/nodeclub/\'>源码地址</a>\n    </div>\n\n    <div class=\'col_fade\'>\n  <p>CNode 社区为国内最专业的 Node.js 开源技术社区，致力于 Node.js 的技术研究。</p>\n  <p>服务器搭建在\n    <a href="https://www.digitalocean.com/?refcode=eba02656eeb3" target="_blank"\n      class="sponsor_outlink" data-label="digitalocean">\n      <img src="/public/images/digitalocean.png" title="digitalocean"\n      alt="digitalocean" width="92px"/>\n    </a>\n  ，存储赞助商为\n    <a href="http://www.qiniu.com/?ref=cnode" target="_blank"\n      class="sponsor_outlink" data-label="qiniu_bottom">\n      <img src="/public/images/qiniu.png" title="七牛云存储"\n      alt="七牛云存储" width="115px"/>\n    </a>\n  </p>\n  <p>新手搭建 Node.js 服务器，推荐使用无需备案的 <a href="https://www.digitalocean.com/?refcode=eba02656eeb3">DigitalOcean(https://www.digitalocean.com/)</a></p>\n</div>\n\n\n  </div>\n</div>\n<div id="sidebar-mask"></div>\n\n\n\n\n\n</body>\n</html>\n' to contain '重置密码'
+    at Assertion.fail (node_modules/should/lib/assertion.js:92:17)
+    at Assertion.Object.defineProperty.value [as containEql] (node_modules/should/lib/assertion.js:164:19)
+    at Test.<anonymous> (test/controllers/sign.test.js:210:25)
+    at Test.assert (node_modules/supertest/lib/test.js:156:6)
+    at assert (node_modules/supertest/lib/test.js:127:12)
+    at node_modules/supertest/lib/test.js:124:5
+    at Test.Request.callback (node_modules/superagent/lib/node/index.js:703:3)
+    at Stream.<anonymous> (node_modules/superagent/lib/node/index.js:922:12)
+    at Unzip.<anonymous> (node_modules/superagent/lib/node/utils.js:108:12)
+    at endReadableNT (_stream_readable.js:905:12)
+
+
+  3) test/controllers/sign.test.js search pass should update passwork:
+     Uncaught expected '<html>\n  <head>\n    <meta charset=\'utf-8\'> \n    <title>TypeError: This library (validator.js) validates strings only</title>\n    <style>* {\nmargin: 0;\n  padding: 0;\n  outline: 0;\n}\n\nbody {\n  padding: 80px 100px;\n  font: 13px "Helvetica Neue", "Lucida Grande", "Arial";\n  background: #ECE9E9 -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#ECE9E9));\n  background: #ECE9E9 -moz-linear-gradient(top, #fff, #ECE9E9);\n  background-repeat: no-repeat;\n  color: #555;\n  -webkit-font-smoothing: antialiased;\n}\nh1, h2 {\n  font-size: 22px;\n  color: #343434;\n}\nh1 em, h2 em {\n  padding: 0 5px;\n  font-weight: normal;\n}\nh1 {\n  font-size: 60px;\n}\nh2 {\n  margin-top: 10px;\n}\nul li {\n  list-style: none;\n}\n#stacktrace {\n  margin-left: 60px;\n}\n</style>\n  </head>\n  <body>\n    <div id="wrapper">\n      <h1>Connect</h1>\n      <h2><em>500</em> TypeError: This library (validator.js) validates strings only</h2>\n      <ul id="stacktrace"><li> &nbsp;at assertString (/home/coding/workspace/node_modules/validator/lib/util/assertString.js:9:11)</li><li> &nbsp;at Object.trim (/home/coding/workspace/node_modules/validator/lib/trim.js:15:30)</li><li> &nbsp;at exports.updatePass (/home/coding/workspace/controllers/sign.js:263:25)</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/route.js:137:13)</li><li> &nbsp;at Route.dispatch (/home/coding/workspace/node_modules/express/lib/router/route.js:112:3)</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:281:22</li><li> &nbsp;at Function.process_params (/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at Function.handle (/home/coding/workspace/node_modules/express/lib/router/index.js:174:3)</li><li> &nbsp;at router (/home/coding/workspace/node_modules/express/lib/router/index.js:47:12)</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at trim_prefix (/home/coding/workspace/node_modules/express/lib/router/index.js:317:13)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:284:7</li><li> &nbsp;at Function.process_params (/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at /home/coding/workspace/node_modules/connect-busboy/index.js:14:14</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at trim_prefix (/home/coding/workspace/node_modules/express/lib/router/index.js:317:13)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:284:7</li><li> &nbsp;at Function.process_params (/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at /home/coding/workspace/app.js:150:3</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at trim_prefix (/home/coding/workspace/node_modules/express/lib/router/index.js:317:13)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:284:7</li><li> &nbsp;at Function.process_params (/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at exports.errorPage (/home/coding/workspace/middlewares/error_page.js:15:3)</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at trim_prefix (/home/coding/workspace/node_modules/express/lib/router/index.js:317:13)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:284:7</li><li> &nbsp;at Function.process_params (/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at /home/coding/workspace/middlewares/auth.js:43:5</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at trim_prefix (/home/coding/workspace/node_modules/express/lib/router/index.js:317:13)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:284:7</li><li> &nbsp;at Function.process_params (/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at exports.authUser (/home/coding/workspace/middlewares/auth.js:99:14)</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at trim_prefix (/home/coding/workspace/node_modules/express/lib/router/index.js:317:13)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:284:7</li><li> &nbsp;at Function.process_params (/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at initialize (/home/coding/workspace/node_modules/passport/lib/middleware/initialize.js:53:5)</li><li>&nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at trim_prefix (/home/coding/workspace/node_modules/express/lib/router/index.js:317:13)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:284:7</li><li> &nbsp;at Function.process_params(/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at session (/home/coding/workspace/node_modules/express-session/index.js:402:7)</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at trim_prefix (/home/coding/workspace/node_modules/express/lib/router/index.js:317:13)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:284:7</li><li> &nbsp;at Function.process_params (/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at compression (/home/coding/workspace/node_modules/compression/index.js:220:5)</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at trim_prefix (/home/coding/workspace/node_modules/express/lib/router/index.js:317:13)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:284:7</li><li> &nbsp;at Function.process_params (/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at cookieParser (/home/coding/workspace/node_modules/cookie-parser/index.js:56:14)</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at trim_prefix (/home/coding/workspace/node_modules/express/lib/router/index.js:317:13)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:284:7</li><li> &nbsp;at Function.process_params (/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at methodOverride (/home/coding/workspace/node_modules/method-override/index.js:79:5)</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at trim_prefix (/home/coding/workspace/node_modules/express/lib/router/index.js:317:13)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:284:7</li><li> &nbsp;at Function.process_params (/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at urlencodedParser (/home/coding/workspace/node_modules/body-parser/lib/types/urlencoded.js:82:7)</li><li> &nbsp;at Layer.handle [as handle_request] (/home/coding/workspace/node_modules/express/lib/router/layer.js:95:5)</li><li> &nbsp;at trim_prefix (/home/coding/workspace/node_modules/express/lib/router/index.js:317:13)</li><li> &nbsp;at /home/coding/workspace/node_modules/express/lib/router/index.js:284:7</li><li> &nbsp;at Function.process_params (/home/coding/workspace/node_modules/express/lib/router/index.js:335:12)</li><li> &nbsp;at next (/home/coding/workspace/node_modules/express/lib/router/index.js:275:10)</li><li> &nbsp;at /home/coding/workspace/node_modules/body-parser/lib/read.js:129:5</li><li> &nbsp;at invokeCallback (/home/coding/workspace/node_modules/body-parser/node_modules/raw-body/index.js:262:16)</li><li> &nbsp;at done (/home/coding/workspace/node_modules/body-parser/node_modules/raw-body/index.js:251:7)</li><li> &nbsp;at IncomingMessage.onEnd (/home/coding/workspace/node_modules/body-parser/node_modules/raw-body/index.js:307:7)</li><li> &nbsp;at emitNone (events.js:67:13)</li><li> &nbsp;at IncomingMessage.emit (events.js:166:7)</li><li> &nbsp;at endReadableNT (_stream_readable.js:905:12)</li><li> &nbsp;at nextTickCallbackWith2Args (node.js:442:9)</li><li> &nbsp;at process._tickCallback (node.js:356:17)</li><li></li></ul>\n    </div>\n  </body>\n</html>\n' to contain '你的密码已重置。'
+    at Assertion.fail (node_modules/should/lib/assertion.js:92:17)
+    at Assertion.Object.defineProperty.value [as containEql] (node_modules/should/lib/assertion.js:164:19)
+    at Test.<anonymous> (test/controllers/sign.test.js:236:25)
+    at Test.assert (node_modules/supertest/lib/test.js:156:6)
+    at assert (node_modules/supertest/lib/test.js:127:12)
+    at node_modules/supertest/lib/test.js:124:5
+    at Test.Request.callback (node_modules/superagent/lib/node/index.js:703:3)
+    at Stream.<anonymous> (node_modules/superagent/lib/node/index.js:922:12)
+    at Unzip.<anonymous> (node_modules/superagent/lib/node/utils.js:108:12)
+    at endReadableNT (_stream_readable.js:905:12)
+
+
+  4) test/controllers/user.test.js #delete_all should delele all ups:
+     Uncaught TypeError: Cannot read property 'ups' of undefined
+    at test/controllers/user.test.js:273:18
+    at node_modules/mongoose/lib/document.js:1819:19
+    at handleError (node_modules/mongoose/node_modules/hooks-fixed/hooks.js:40:22)
+    at next_ (node_modules/mongoose/node_modules/hooks-fixed/hooks.js:75:26)
+    at fnWrapper (node_modules/mongoose/node_modules/hooks-fixed/hooks.js:186:18)
+    at node_modules/mongoose/lib/model.js:287:15
+    at node_modules/mongoose/lib/model.js:188:14
+    at node_modules/mongoose/lib/model.js:164:11
+    at handleCallback (node_modules/mongoose/node_modules/mongodb/lib/utils.js:96:12)
+    at node_modules/mongoose/node_modules/mongodb/lib/collection.js:1008:42
+    at commandCallback (node_modules/mongoose/node_modules/mongodb/node_modules/mongodb-core/lib/topologies/server.js:1142:9)
+    at [object Object].Callbacks.emit (node_modules/mongoose/node_modules/mongodb/node_modules/mongodb-core/lib/topologies/server.js:116:3)
+    at [object Object].messageHandler (node_modules/mongoose/node_modules/mongodb/node_modules/mongodb-core/lib/topologies/server.js:291:23)
+    at Socket.<anonymous> (node_modules/mongoose/node_modules/mongodb/node_modules/mongodb-core/lib/connection/connection.js:285:22)
+    at readableAddChunk (_stream_readable.js:146:16)
+    at Socket.Readable.push (_stream_readable.js:110:10)
+    at TCP.onread (net.js:529:20)
+
+
+  5) test/controllers/reply.test.js upvote reply should decrease:
+
+      Uncaught AssertionError: expected Object { action: 'up', success: true } to equal Object { action: 'down', success: true } (at action, A has 'up' and B has 'down')
+      + expected - actual
+
+       {
+      -  "action": "up"
+      +  "action": "down"
+         "success": true
+       }
+
+    at Assertion.fail (node_modules/should/lib/assertion.js:92:17)
+    at Assertion.Object.defineProperty.value (node_modules/should/lib/assertion.js:164:19)
+    at Test.<anonymous> (test/controllers/reply.test.js:116:25)
+    at Test.assert (node_modules/supertest/lib/test.js:156:6)
+    at Server.assert (node_modules/supertest/lib/test.js:127:12)
+    at emitCloseNT (net.js:1519:8)
+
+
+  6) test/api/v1/reply.test.js create ups should down:
+
+      Uncaught AssertionError: expected 'up' to be 'down'
+      + expected - actual
+
+      -up
+      +down
+
+    at Assertion.fail (node_modules/should/lib/assertion.js:92:17)
+    at Assertion.Object.defineProperty.value (node_modules/should/lib/assertion.js:164:19)
+    at Test.<anonymous> (test/api/v1/reply.test.js:157:34)
+    at Test.assert (node_modules/supertest/lib/test.js:156:6)
+    at Server.assert (node_modules/supertest/lib/test.js:127:12)
+    at emitCloseNT (net.js:1519:8)
+
+
+  7) test/api/v1/topic.test.js get /api/v1/topic/:topicid should is_uped to be true with right accesstoken:
+     Uncaught AssertionError: expected false to be true
+    at Assertion.fail (node_modules/should/lib/assertion.js:92:17)
+    at Assertion.Object.defineProperty.value (node_modules/should/lib/assertion.js:164:19)
+    at Test.<anonymous> (test/api/v1/topic.test.js:119:55)
+    at Test.assert (node_modules/supertest/lib/test.js:156:6)
+    at Server.assert (node_modules/supertest/lib/test.js:127:12)
+    at emitCloseNT (net.js:1519:8)
+
+
+
+
+Makefile:22: recipe for target 'test' failed
+make: *** [test] Error 7
+➜  workspace git:(master) ✗
+
+
+
+
