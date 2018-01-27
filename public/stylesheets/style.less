@@ -2,6 +2,7 @@
 @gray2: #f6f6f6;
 @node_green: #80bd01;
 @node_black: #444444;
+@node_white: #FFFFFF;
 
 /* base */
 body {
@@ -802,7 +803,7 @@ textarea#title {
   z-index: 9;
   width: 100%;
   position: relative;
-  background: @node_black;
+  background: @node_white;
   font-size: 13px;
 }
 
@@ -825,39 +826,62 @@ textarea#title {
 
 .navbar .brand {
   padding: 4px 0px 0px 20px;
-  width: 120px;
+  width: 80px;
   padding: 3px 20px;
   height: 34px;
   line-height: 34px;
   text-shadow: none;
-  color: #cccccc;
+  color: #1787FB;
   font-weight: 700;
+  font-size: 24px;
 
   img {
     vertical-align: initial;   
   }
 }
 
+.navbar .navbar-main {
+  font-size: 16px;
+}
+
 .navbar .navbar-search {
-  margin-top: 6px;
+  margin-top: 2px;
+  margin-left: 50px;
+}
+
+.navbar .navbar-question {
+  position: relative;
+  // left: 0;
+  // display: block;
+  float: left;
+  margin-top: 4px;
+  // width: 200px;
+  margin-left: 20px;
 }
 
 .navbar .search-query {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
-  background: #888 url('../images/search.png') no-repeat 4px 4px;
-  padding: 3px 5px 3px 22px;
-  color: #666;
-  border: 0px;
-  margin-top: 2px;
+     
+  background: #EEE url('../images/search.png') no-repeat 8px 8px;
+  padding: 2px 5px 5px 28px;
+  // margin-top: 2px;
+  border-radius: 5px;
+  height: 30px;
+  border: none;
+   
+  
 
   &:hover {
-    background-color: white;
+    background-color: #CCCCCC;
   }
   transition: all 0.5s;
 
   &:focus, &.focused {
-    background-color: white;
+    background-color: #CCCCCC;
+    outline: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
   }
 }
 
@@ -868,9 +892,9 @@ textarea#title {
 
 .navbar .nav > li > a {
   text-shadow: none;
-  color: #cccccc;
+  color: #4E4E4E;
   &:hover {
-    color: #fff;
+    color: #8590a6;
   }
 }
 
