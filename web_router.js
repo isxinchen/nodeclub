@@ -99,6 +99,8 @@ router.post('/answer/:answer_id/delete', auth.userRequired, answer.delete); // �
 router.post('/answer/:answer_id/up', auth.userRequired, answer.up); // 为评论点赞
 router.post('/upload', auth.userRequired, question.upload); //上传图片
 
+router.get('/topics, topic.index');
+
 // static
 router.get('/about', staticController.about);
 router.get('/faq', staticController.faq);

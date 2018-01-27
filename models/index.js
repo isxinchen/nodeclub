@@ -17,9 +17,13 @@ require('./question');
 require('./answer');
 require('./question_collect');
 require('./message');
+require('./topic');
+require('./topic_question');
 
 exports.User         = mongoose.model('User');
 exports.Question        = mongoose.model('Question');
 exports.Answer        = mongoose.model('Answer');
 exports.QuestionCollect = mongoose.model('QuestionCollect');
 exports.Message      = mongoose.model('Message');
+exports.Topic        = mongoose.model('Topic');
+exports.TopicQuestion = mongoose.model('TopicQuestion');

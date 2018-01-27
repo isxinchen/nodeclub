@@ -925,6 +925,145 @@ textarea#title {
   line-height: 22px;
 }
 
+
+/***********************************************************/
+.question-addtopic input {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+     
+  padding: 2px 5px 5px 2px;
+  // margin-top: 2px;
+  border-radius: 5px;
+  height: 30px;
+  width: 300px;
+  border: 1px solid #CCCCCC;
+  outline: none;
+   
+  &:hover {
+    // background-color: #CCCCCC;
+  }
+  transition: all 0.5s;
+
+  &:focus, &.focused {
+    // background-color: #CCCCCC;
+    border: 1px solid #CCCCCC;
+    outline: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+}
+
+#addTopic {
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+
+.topic-selected-count {
+  margin-left: 10px;
+}
+
+#create_question_form .question-title {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+     
+  padding: 2px 5px 5px 2px;
+  // margin-top: 2px;
+  border-radius: 5px;
+  height: 30px;
+  width: 400px;
+  border: 1px solid #CCCCCC;
+  outline: none;
+   
+  &:hover {
+    // background-color: #CCCCCC;
+  }
+  transition: all 0.5s;
+
+  
+  &:focus, &.focused {
+    // background-color: #CCCCCC;
+    border: 1px solid #CCCCCC;
+    outline: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+}
+
+.topic-selected {
+  margin-bottom: 5px;
+}
+
+.topic-suggests {
+  display: none;
+  width: 300px; 
+  height: 200px; 
+  margin-left: 0px;
+  -moz-box-shadow:0px 0px 1px #333333; 
+  -webkit-box-shadow:0px 0px 1px #333333; 
+  box-shadow:0px 0px 1px #333333; 
+  border-radius: 5px;
+  list-style: none;
+  position: absolute;
+  background-color: #FFFFFF;
+  z-index: 8;
+  overflow: scroll;
+}
+
+.topic-suggests li {
+  width: 100%;
+  height: 30px;
+  padding: 10px 5px 5px 10px;
+}
+
+.topic-suggests li:hover {
+  background-color: #EEEEEE;
+}
+
+.topic-item {
+  margin-left: 2px;
+  margin-right: 4px;
+  margin-bottom: 2px;
+  
+  position: relative;
+  display: inline-block;
+  height: 30px;
+  padding: 0px 28px 0px 12px;
+  font-size: 14px;
+  line-height: 30px;
+  color: #0084ff;
+  vertical-align: top;
+  border-radius: 100px;
+  background: rgba(0,132,255,.1);
+}
+
+.topic-item-content {
+  font-size: 14px;
+  line-height: 30px;
+  color: #0084ff;
+}
+
+.topic-item-remove {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  bottom: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  border: none;
+  outline: none;
+  color: inherit;
+}
+
+.topic-item-remove .Zi {
+  display: block;
+}
+
+
+/***********************************************************/
+
 .pagination {
   height: 40px;
   margin: 10px 0px 0px 10px;

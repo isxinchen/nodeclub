@@ -6,9 +6,9 @@
       <ol class='breadcrumb'>
         <li><a href='/'>主页</a><span class='divider'>/</span></li>
         <% if(typeof(action) !== 'undefined' && action == 'edit'){ %>
-        <li class='active'>编辑话题</li>
+        <li class='active'>编辑问题</li>
         <% }else{ %>
-        <li class='active'>发布话题</li>
+        <li class='active'>提问</li>
         <% } %>
       </ol>
     </div>
@@ -24,13 +24,14 @@
         <strong><%= error %></strong>
       </div>
       <% }else{ %>
-      <% if (typeof(action) !== 'undefined' && action === 'edit') { %>
+      <!--<% if (typeof(action) !== 'undefined' && action === 'edit') { %>
       <form id='create_question_form' action='/question/<%= question_id %>/edit' method='post'>
         <% } else { %>
         <form id='create_question_form' action='/question/create' method='post'>
-          <% } %>
+          <% } %>-->
+          <form id='create_question_form' action='#'>
           <fieldset>
-            <span class="tab-selector">选择版块：</span>
+            <!--<span class="tab-selector">选择版块：</span>
             <select name="tab" id="tab-value">
               <option value="">请选择</option>
               <%
@@ -45,21 +46,31 @@
                 <option value="<%=value%>" <%= tabValue === value ? 'selected': '' %>><%=text%></option>
 
               <%});%>
-            </select>
+            </select>-->
+            <br>
+           
             <span id="question_create_warn"></span>
-            <textarea autofocus class='span9' id='title' name='title' rows='1'
+            <input autofocus class='question-title span9' id='title' name='title' type="text"
                       placeholder="标题字数 10 字以上"
-                    ><%= typeof(title) !== 'undefined' && title || '' %></textarea>
-
+                    ><%= typeof(title) !== 'undefined' && title || '' %></input>
+                    
+            <div class="question-addtopic">
+              <input type="text" placeholder="添加话题" id="topicName" name="topicName" autocomplete="off"></input>
+              <span id="addTopic" class="btn-add-topic span-success">添加话题</span>
+              <span class="topic-selected-count"></span>
+              <ul class="topic-suggests"></ul>
+              <div class="topic-selected"></div>
+            </div>
+            
             <div class='markdown_editor in_editor'>
               <div class='markdown_in_editor'>
-                <textarea class='editor' name='t_content' rows='20'
+                <textarea class='editor' name='t_content' rows='20' id='t_content'
                           placeholder='文章支持 Markdown 语法, 请注意标记代码'
                         ><%= typeof(content) !== 'undefined' && content || '' %></textarea>
 
                 <div class='editor_buttons'>
                   <input type="submit" class='span-primary submit_btn' data-loading-text="提交中"
-                         value="提交">
+                         value="提交问题">
                 </div>
               </div>
 
@@ -80,16 +91,159 @@
   (function () {
     var editor = new Editor();
     editor.render($('.editor')[0]);
+    
+    // 根据输入，获取话题
+    var dataList = {value: []}, i = 5;
+    while(i--) {
+        dataList.value.push({
+            id: i,
+            word: Math.random() * 100000,
+            description: 'http://lzw.me'
+        });
+    }
+    $('.topic-suggests').hide();
+    
+    $('#topicName').on('input', function(){
+      console.log('input');
+      $('.topic-suggests li').remove();
+      for(i = 0; i < dataList.value.length; i++){
+        console.log('append');
+        $('.topic-suggests').append('<li>' + dataList.value[i].word +'</li>');
+      }
+      if($(this).val() == ''){
+        $(".topic-suggests").hide();
+      }else{
+        $(".topic-suggests").show();
+      }
+    });
+    
+    //输入框得到焦点时
+    $("#topicName").on('focus',function(){
+
+    })
+    //输入框失去焦点时
+    $("#topicName").on('blur',function(){
+      // $(".topic-suggests").hide();
+    })
+    
+    $('.topic-suggests').on('click', 'li', function(event){
+      var size = $('.topic-selected .topic-item').size();
+      if(size == 5){
+        return;
+      }
+      console.log('e.value():' + $(this).text());
+      $('.topic-selected').append('<div class="topic-item"><span class="topic-item-content">'+ $(this).text() + '</span><button class="topic-item-remove"><svg class="Zi Zi--Close" fill="currentColor" viewBox="0 0 24 24" width="1.2em" height="1.2em"><path d="M13.486 12l5.208-5.207a1.048 1.048 0 0 0-.006-1.483 1.046 1.046 0 0 0-1.482-.005L12 10.514 6.793 5.305a1.048 1.048 0 0 0-1.483.005 1.046 1.046 0 0 0-.005 1.483L10.514 12l-5.208 5.207a1.048 1.048 0 0 0 .006 1.483 1.046 1.046 0 0 0 1.482.005L12 13.486l5.207 5.208a1.048 1.048 0 0 0 1.483-.006 1.046 1.046 0 0 0 .005-1.482L13.486 12z" fill-rule="evenodd"></path></svg></button></div>');
+      var size = $('.topic-selected .topic-item').size();
+      if(size > 0){
+        $('.topic-selected-count').text('(' + size + '/5)');
+      } 
+      $(".topic-suggests").hide();
+      $('#topicName').val('');
+    })
+       
+    $(document).click(function(e){                         
+        $(".topic-suggests").hide();
+    });    
+    
+    $('#addTopic').on('click', function(){
+      var size = $('.topic-selected .topic-item').size();
+      if(size == 5){
+        return;
+      }
+      var topic =  $('#topicName').val();
+      if(topic){
+        $('.topic-selected').append('<div class="topic-item"><span class="topic-item-content">'+ topic + '</span><button class="topic-item-remove"><svg class="Zi Zi--Close" fill="currentColor" viewBox="0 0 24 24" width="1.2em" height="1.2em"><path d="M13.486 12l5.208-5.207a1.048 1.048 0 0 0-.006-1.483 1.046 1.046 0 0 0-1.482-.005L12 10.514 6.793 5.305a1.048 1.048 0 0 0-1.483.005 1.046 1.046 0 0 0-.005 1.483L10.514 12l-5.208 5.207a1.048 1.048 0 0 0 .006 1.483 1.046 1.046 0 0 0 1.482.005L12 13.486l5.207 5.208a1.048 1.048 0 0 0 1.483-.006 1.046 1.046 0 0 0 .005-1.482L13.486 12z" fill-rule="evenodd"></path></svg></button></div>');
+        var size = $('.topic-selected .topic-item').size();
+        if(size > 0){
+          $('.topic-selected-count').text('(' + size + '/5)');
+        } 
+        $(".topic-suggests").hide();
+        $('#topicName').val('');
+      }
+    })
+    
+    $('.topic-selected').on('click', '.topic-item-remove', function(){
+      console.log('remove topic item clicked');
+      $(this).parent().remove();
+      var size = $('.topic-selected .topic-item').size();
+      if(size > 0){
+        $('.topic-selected-count').text('(' + size + '/5)');
+      } else {
+        $('.topic-selected-count').text('');
+      }
+      return false;
+    })
+    
+    $('#btnSubmit').on('click', function () {
+      
+      return false;
+    });
 
     // 版块选择的检查，必须选择
     $('#create_question_form').on('submit', function (e) {
-      var tabValue = $('#tab-value').val();
+     /* var tabValue = $('#tab-value').val();
       if (!tabValue) {
         alert('必须选择一个版块！');
         $('.submit_btn').button('reset');
         $('.tab-selector').css('color', 'red');
         return false;
+      }*/
+      var topicNames = [];
+      $('.topic-selected .topic-item-content').each(function(){
+        var text = $(this).text();
+        topicNames.push(text);
+      });
+      
+      
+      
+      var title = $('#create_question_form #title').val();
+      var t_content = $('#create_question_form #t_content').val();
+      console.log('title:' + title);
+      console.log('topicNames:' + topicNames);
+      console.log('t_content:' + t_content);
+      
+      var reqData = {
+        title: title,
+        topicNames: topicNames,
+        t_content: t_content,
       }
+      
+      console.log('submit data');
+      <% if (typeof(action) !== 'undefined' && action === 'edit') { %>
+      var url = "/question/<%= question_id %>/edit";
+      <% } else { %>
+      var url = "/question/create";
+      <% } %>
+      $.ajax({
+        url: url,
+        method: 'POST',
+        data: reqData,
+        // contentType: 'application/json', 
+        traditional: true,   // keys[] : ['sss', 'aaa'] --> keys: ['sss', 'aaa']
+        processData: true,
+        // dataType: 'json',
+        cache: false,
+        success: function(data) {
+          console.log('data: ' + JSON.stringify(data));
+          if (data.code == 0) {
+            //$('.prompt').html(`文件${JSON.parse(data).filename}已上传成功`);
+            alert('success');
+          }
+        },
+        error: function (jqXHR) {
+          console.log(JSON.stringify(jqXHR));
+          }
+        })
+        .done(function(data) {
+          console.log('done');
+        })
+        .fail(function(data) {
+          console.log('fail');
+        })
+        .always(function(data) {
+          console.log('always');
+        });
+      return false;
     });
     // END 版块选择的检查，必须选择
 

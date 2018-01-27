@@ -7,15 +7,15 @@ var _         = require('lodash');
 
 var TopicSchema = new Schema({
   title: { type: String },
-  content: { type: String },
+  description: { type: String },
   author_id: { type: ObjectId },
   create_at: { type: Date, default: Date.now },
   update_at: { type: Date, default: Date.now },
   deleted: {type: Boolean, default: false},
 });
 
-QuestionSchema.plugin(BaseModel);
-QuestionSchema.index({create_at: -1});
-QuestionSchema.index({author_id: 1, create_at: -1});
+TopicSchema.plugin(BaseModel);
+TopicSchema.index({create_at: -1});
+TopicSchema.index({author_id: 1, create_at: -1});
 
 mongoose.model('Topic', TopicSchema);

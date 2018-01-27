@@ -10,6 +10,8 @@ var validator = require('validator');
 
 var at           = require('../common/at');
 var User         = require('../proxy').User;
+var Topic        = require('../proxy').Topic;
+var TopicQuestion   = require('../proxy').TopicQuestion;
 var Question        = require('../proxy').Question;
 var QuestionCollect = require('../proxy').QuestionCollect;
 var EventProxy   = require('eventproxy');
@@ -119,14 +121,18 @@ exports.create = function (req, res, next) {
 
 
 exports.put = function (req, res, next) {
+  console.log('title:' + req.body.title);
+  console.log('content:' + req.body.t_content);
+  
   var title   = validator.trim(req.body.title);
-  var tab     = validator.trim(req.body.tab);
+  // var tab     = validator.trim(req.body.tab);
+  var topicNames   = req.body.topicNames;
   var content = validator.trim(req.body.t_content);
 
   // 得到所有的 tab, e.g. ['ask', 'share', ..]
-  var allTabs = config.tabs.map(function (tPair) {
-    return tPair[0];
-  });
+  // var allTabs = config.tabs.map(function (tPair) {
+    // return tPair[0];
+  // });
 
   // 验证
   var editError;
@@ -134,34 +140,76 @@ exports.put = function (req, res, next) {
     editError = '标题不能是空的。';
   } else if (title.length < 5 || title.length > 100) {
     editError = '标题字数太多或太少。';
-  } else if (!tab || allTabs.indexOf(tab) === -1) {
+  } /*else if (!tab || allTabs.indexOf(tab) === -1) {
     editError = '必须选择一个版块。';
-  } else if (content === '') {
+  }*/ else if (content === '') {
     editError = '内容不可为空';
+  } else if (!topicNames || topicNames.length == 0 || topicNames.length > 5){
+    editError = '需要1-5个话题';
   }
+  
+  
   // END 验证
 
   if (editError) {
+    console.log('editError:' + editError);
     res.status(422);
     return res.render('question/edit', {
       edit_error: editError,
       title: title,
+      topicNames: topicNames,
       content: content,
-      tabs: config.tabs
+      // tabs: config.tabs
     });
   }
 
-  Question.newAndSave(title, content, tab, req.session.user._id, function (err, question) {
+  Question.newAndSave(title, content, req.session.user._id, function (err, question) {
     if (err) {
       return next(err);
     }
 
     var proxy = new EventProxy();
 
-    proxy.all('score_saved', function () {
+    proxy.all(['score_saved', 'topic_question_saved'], function () {
       res.redirect('/question/' + question._id);
     });
+    proxy.after('topic_saved', topicNames.length, function (list){
+      proxy.emit('topic_question_saved');
+    });
+    
     proxy.fail(next);
+    
+    // for(var i = 0; i < topicNames.length; i++){
+    topicNames.forEach(function(topicName, index){
+       Topic.getTopicByName(topicName, function(err, doc){
+        if(err){
+          return next(err);
+        }
+        if(doc){
+          TopicQuestion.newAndSave(doc._id, question._id, function (err, topicQuestion) {
+            if(err){
+              return next(err);
+            }
+            proxy.emit('topic_saved', topicQuestion);
+          });
+        }else{
+          Topic.newAndSave(topicName, '', req.session.user._id, function(err, newTopic) {
+            if(err){
+              return next(err);
+            }
+            TopicQuestion.newAndSave(newTopic._id, question._id, function (err, topicQuestion) {
+              if(err){
+                return next(err);
+              }
+              proxy.emit('topic_saved', topicQuestion);
+            });
+          });
+        }
+      })
+    
+    })
+     
+    
     User.getUserById(req.session.user._id, proxy.done(function (user) {
       user.score += 5;
       user.question_count += 1;

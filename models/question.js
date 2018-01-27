@@ -20,7 +20,7 @@ var QuestionSchema = new Schema({
   last_answer: { type: ObjectId },
   last_answer_at: { type: Date, default: Date.now },
   content_is_html: { type: Boolean },
-  tab: {type: String},
+  // tab: {type: String},
   deleted: {type: Boolean, default: false},
 });
 
